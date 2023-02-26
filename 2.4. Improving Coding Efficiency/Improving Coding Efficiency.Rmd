@@ -1,0 +1,333 @@
+# Improving Coding Efficiency
+
+This training module was developed by Alexis Payton, Dr. Kyle R. Roell, and Dr. Julia E. Rager
+
+Spring 2023
+
+## Introduction to Training Module
+
+Coding efficiency involves performing a task in as few lines as possible and can...
+- eliminate redundancies
+- reduce the number of typos
+- help other coders understand script 
+
+In this module, we'll explore how functions and loops are often used to make code more succint. As a brief overview, a **loop** is employed when we want to perform a repetitive task, while a **function** contains a block of code organized together to perform one specific task.
+
+Let's start with loops first. There are three main types of loops in R: `for`, `while`, and `repeat`. However, we're only going to discuss the `for` loop in this module. For more information on the others and loops in general, click [here](https://intro2r.com/loops.html).
+
+A `for` loop is used when we want to specify the number of times we'd like R to repeat a task. We'll load in our data and then explore how a for loop works. 
+
+
+### Installing required R packages
+If you already have these packages installed, you can skip this step, or you can run the below code which checks installation status for you
+
+
+```{r}
+if (!requireNamespace("tidyverse"))
+  install.packages("tidyverse");
+```
+    
+
+
+### Loading required R packages
+
+
+```{r}
+library(tidyverse)
+```
+
+
+
+### Set your working directory
+
+
+```{r}
+setwd("/filepath to where your input files are")
+```
+
+### Importing example dataset
+The first example dataset contains subject demographic data and the second dataset contains corresponding chemical data. Familiarize yourself with these data used previously in [Module 1.2] (link to module). 
+
+
+```{r}
+# Load the data
+demographic_data <- read.csv("Module2_4/Module2_4_DemographicData.csv")
+chemical_data <- read.csv("Module2_4/Module2_4_ChemicalData.csv")
+
+# Creating a smaller dataframe for easier viewing
+smaller_demographic_data <- demographic_data[1:10,]
+
+# View the top of the dataset
+head(demographic_data) 
+```
+
+
+
+
+We'll be using a dataset that has subject demographic data. Often times continous variables, like BMI, are dichotomized to increase statistical power in analyses. 
+
+## Training Module's Environmental Health Question
+This training module was specifically developed to answer the following environmental health question:
+1. Are there statistically significant differences in gestational age between normal weight (BMI < 25) and overweight (BMI > 25) subjects?
+
+Notice in our dataframe that BMI is a continuous or numeric variable, however the question requires us to dichotomize BMI. This can be tackled with the help of a loop, but before we do that let's go over how loops work.
+
+
+```{r}
+# Basic structure of a for loop
+for (i in 1:4){
+    print(i)
+}
+```
+
+
+In the above code block, we always start with `for` followed by a statement in parentheses. In the parentheses, we are telling R to iterate or repeat the code in curly brackets 4 times. Each time we told R to print the value of our iterator or `i`, which had a value of 1,2,3, and then 4.
+
+We can also have loops iterate through columns in a dataset. Let's use a `for` loop to print the ages of each subject.
+
+
+```{r}
+# Finding the total number of rows or subjects in the dataset
+number_of_rows_smaller_df <- length(smaller_demographic_data$MAge)
+
+# Creating a for loop to iterate from 1 to the last row
+for (i in 1:number_of_rows_smaller_df){
+    # Printing each subject age
+    # Need to put `[i]` to index the correct value
+    print(smaller_demographic_data$MAge[i])
+}
+```
+
+
+Now that we've reviewed the structure of a `for` loop, we can use it to dichotomize BMI with the help of an if/else statement.
+
+
+```{r}
+# Finding the total number of rows or subjects in the dataset
+number_of_rows <- length(demographic_data$BMI)
+
+# Creating a for loop to iterate from 1 to the last row
+for (i in 1:number_of_rows){
+    
+    # if BMI is < 25 
+    if (demographic_data$BMI[i] < 25){
+        # then classify the subject as having a normal BMI
+        demographic_data$Dichotomized_BMI[i] = "Normal"
+        
+    # if the BMI is > 25
+    } else {
+        # then classify the subject as having an overweight BMI
+        demographic_data$Dichotomized_BMI[i] = "Overweight"
+    }
+}
+
+# Viewing data
+head(demographic_data)
+```
+
+We can see that we now have created a new column entitled `Dichotomized_BMI` that we can use to perform a statistical test to assess if there are differences between serum cotinine levels of normal and overweight subjects. Typically t tests are used to do this, however if the subject number (n) < 50, the nonparametric version, Wilcoxon rank sums, should be used.
+
+
+```{r}
+# Finding the number of subjects
+length(unique(demographic_data$ID))
+```
+
+The dataset contains 200 subjects, so we'll perform t tests. Before creating a function to perform t tests. Let's familiarize ourselves with how to create a function in R.
+
+
+```{r}
+# Basic structure of a function
+function_name <- function(parameter_1, parameter_2...){
+    # Function body (where the code goes)
+    return()
+}
+```
+
+A function requires you to name it as we did with `function_name`. In parentheses, the function requires you to specify the arguments or parameters. Parameters (ie. `parameter_1`) act as placeholders in the body of the function. This allows us to change the values of the parameters each time a function is called, while the majority of the code remains the same. Lastly, we have a `return` statement, which specifies what object (ie. vector, dataframe, etc.) we want to retrieve from a function. Although a function can display the last expression from the function body in the absence of a `return` statement, it's a good habit to get into to include it as the last expression. This is very important, because a function is only one object is able to retrieved from a function.
+
+We'll start with a simple function. Let's say we want to convert temperatures from Fahrenheit to Celcius.
+
+
+```{r}
+# Always clarify the purpose of the function, it's parameters, and output at the beginning
+fahrenheit_to_celsius <- function(fahrenheit_temperature){
+    # Converting temperatures in Fahrenheit to Celcius
+
+    # :parameters: temperature in Fahrenheit
+    # :output: temperature in Celcius
+    
+    celcius_temperature <- (fahrenheit_temperature - 32) * (5/9)
+    
+    return(celcius_temperature)
+}
+```
+
+Notice that the above code block was run, but there isn't an output. That's because we haven't called the function. Let's start by converting 41 degrees Fahrenheit to Celcius by providing the function a value.
+
+
+```{r}
+# Calling the function: here 41 is the `fahrenheit_temperature` in the function
+fahrenheit_to_celsius(41)
+```
+
+So 41 degrees Fahrenheit is equivalent to 5 degrees Celcius. We can also have the function convert a vector of values.
+
+
+```{r}
+vector_of_temperatures <- c(81,74,23,65)
+
+# Calling the function
+fahrenheit_to_celsius(vector_of_temperatures)
+```
+
+Before getting back to answer our environmental health related question, let's look at one more example of a function. This time we'll create a function that can calculate can calculate the circumference of a circle based on its radius in inches.
+
+
+```{r}
+circle_circumference <- function(radius){
+    # Calculating a circle's circumference based on the radius inches
+
+    # :parameters: radius
+    # :output: circumference and radius
+    
+    # Calculating diameter first
+    diameter <- 2 * radius
+    
+    # Calculating circumference
+    circumference <- pi * diameter
+    
+    return(circumference)
+}
+
+# Calling function
+circle_circumference(3)
+```
+
+So, if a circle had a radius of 3 inches it's circumference would be ~19 inches. What if we were interested in seeing the diameter to double check our code?
+
+
+```{r}
+diameter
+```
+
+
+R throws an error, because the variable, `diameter`, was created inside the function and the function only returned the `circumference` variable. There are two ways we can still see the `diameter` variable. 
+
+1. Put print statements in the function
+2. Have the function return a different variable
+
+
+```{r}
+# This time putting in a print statement to see the diameter variable
+circle_circumference_1 <- function(radius){
+    # Calculating a circle's circumference based on the radius inches
+
+    # :parameters: radius
+    # :output: circumference and radius
+    
+    # Calculating diameter first
+    diameter <- 2 * radius
+    # Print statement
+    print(diameter)
+    
+    # Calculating circumference
+    circumference <- pi * diameter
+    
+    return(circumference)
+}
+
+# Calling function
+circle_circumference_1(10)
+```
+
+
+This time we see both the diameter and the final circumference value. Let's modify the function one more time to change the return statement.
+
+
+```{r}
+# Now changing the return statement
+circle_circumference_2 <- function(radius){
+    # Calculating a circle's circumference based on the radius inches
+
+    # :parameters: radius
+    # :output: circumference and radius
+    
+    # Calculating diameter first
+    diameter <- 2 * radius
+    
+    # Calculating circumference
+    circumference <- pi * diameter
+    
+    return(diameter)
+}
+
+# Calling function
+circle_circumference_2(10)
+```
+
+In the function above, we only see the diameter since we asked function to return the `diameter` variable even though circumference was the last expression computed. These last two iterations can be helpful to double check your code, especially as it becomes more complicated.
+
+Now that we understand how functions work, let's go back to creating one to run t tests between our two BMI groups.
+
+
+```{r}
+# Function
+t_test_values <- function(variable, class1, class2){
+    # """
+    # Running t tests after creating 2 dataframes filtered based on a variable of interest that has two classes
+    # Ultimately using this test to differences in gestational age
+
+    # :param: subsetted dataframe, empty dataframe
+    # :output: a dataframe containing the variable, u stat, and p value
+
+    # """
+
+    # class df 1
+    class_1_df <- demographic_data %>%
+        filter(UQ(sym(variable)) == class1)
+
+    # class df 2 
+    class_2_df <- demographic_data %>%
+        filter(UQ(sym(variable)) == class2)
+
+    # t test
+    t_test <- t.test(class_1_df$GA, class_2_df$GA)
+
+    # contains u stat and p value
+    values_df <- data.frame(cbind(variable, t_test$statistic, t_test$p.value))
+
+    
+    # adding col names
+    colnames(values_df) <- c("Variable", "Statistic", "P Value")
+    
+    return(values_df)
+}
+
+# Calling function
+t_test_values("Dichotomized_BMI", "Normal", "Overweight")
+```
+
+Since the p value > 0.05, there are not statistically significant differences in gestational age across BMI groups.
+
+## Additional Resources
+- https://intro2r.com/prog_r.html
+- https://intro2r.com/functions-in-r.html
+
+## Test your knowledge
+1. Are there statistically significant differences in gestational age between younger mothers (maternal age < 30 years old) and older mothers (maternal age > 30 years old)?
+2. Are there statistically significant differences in each drinking water chemical (ie. Arsenic levels, Cadmium levels, etc.) between younger and older mothers?
+    - **Hint 1**: Start with the dataframe below.
+    - **Hint 2**: Create a new function for obtaining the statistics and use a loop within the function.
+
+
+```{r}
+# Creating the combined dataframe with chemical and demographic data to answer question 2
+# First changing the chemical data from a wide to long format
+longer_chemical_data <- pivot_longer(chemical_data, cols = 2:7, names_to = "Chemical", 
+                                    values_to = "Chemical_Concentration")
+demographic_chemical_data <- inner_join(demographic_data, longer_chemical_data) 
+
+head(demographic_chemical_data)
+```
+
