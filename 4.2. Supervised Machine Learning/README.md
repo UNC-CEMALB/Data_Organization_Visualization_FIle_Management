@@ -200,7 +200,7 @@ roc_obj = roc(response = data_test[[Sex]], predictor = factor(data_test[[pred_ou
 best_thres_data = data.frame(coords(roc_obj, x = "best", best.method = c("youden", "closest.topleft")))
 threshold.data = rbind(threshold.data, best_thres_data)
 
-# extracting accuracy, sens, spec, PPV to take mean later 
+#extracting accuracy, sens, spec, PPV to take mean later 
 matrix_values = data.frame(t(c(matrix$byClass[11])), t(c(matrix$byClass[1:3])), auc)
 
 #extracting variable importance
@@ -214,7 +214,7 @@ metrics = rbind(metrics, matrix_values)
 
   }
   
-# taking averages/sd
+#taking averages/sd
 metrics = metrics %>%
     summarise("Balanced Accuracy" = mean(Balanced.Accuracy), Sensitivity = mean(Sensitivity), 
               Specificity = mean(Specificity), PPV = mean(Pos.Pred.Value), AUC = mean(auc))
