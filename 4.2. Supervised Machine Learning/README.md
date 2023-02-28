@@ -127,3 +127,104 @@ pre.dataset %>%
   add_p(test = list(all_continuous() ~ "aov")) %>%
   as_tibble()
 ```
+
+## Making the Data wide
+
+wider_data = pre.dataset %>% 
+  mutate(Sex = relevel(factor(ifelse(Sex == "M", 1, 0)), ref = "0")) %>%
+  rename(XCTNNA1 = "CTNNA1")
+
+## Creating the Random Forest
+
+rf_classification = function(pre.dataset, Sex, pred_outcome) { 
+  set.seed(20)
+  dataset_index = createFolds(pre.dataset[[Sex]], k = 10)
+  
+  metrics = data.frame()
+  variable_importance_df = data.frame()
+  roc_objects = c()
+  threshold.data = data.frame ()
+  
+  for(i in 1:length(dataset_index)) {
+    data_train = pre.dataset[-dataset_index[[i]],]
+    data_test = pre.dataset[dataset_index[[i]],]
+    
+    ntrees_values =c(50,250,500)
+    p = dim(pre.dataset)[2] - 1 #What does this mean???
+    #number of variables in the dataset; we only need 1
+    mtry_values = c(sqrt(p), p/2, p/3)
+    
+    #will use ntree and mtry values to determine which combination yields the smallest MSE
+    reg_rf_pred_tune = list()
+    rf_OOB_errors = list()
+    rf_error_df = data.frame()
+    for (j in 1:length(ntrees_values)) {
+      for(k in 1:length(mtry_values)) {
+        reg_rf_pred_tune[[k]] = randomForest(as.formula(paste0(Sex, "~.")), data = data_train,
+                                             ntree = ntrees_values[j], mtry = mtry_values[k])
+        rf_OOB_errors[[k]] = data.frame("Tree Number" = ntrees_values[j], "Variable Number" = mtry_values[k], "OOB_error" = reg_rf_pred_tune[[k]]$err.rate[ntrees_values[j], 1])
+        rf_error_df = rbind(rf_error_df, rf_OOB_errors[[k]])
+      }
+    }
+
+#finding the lowest OOB error using the best number of predictors at split and refitting OG tree 
+    
+best_oob_errors <- which(rf_error_df$OOB_errors == min(rf_OOB_errors$OOB_errors))
+
+#many models have the lowest errors, so now selecting based on largest number of trees grown 
+best_oob_errors = rf_error_df[best_oob_errors, ]
+largest_trees = which(best_oob_df$Tree.number == max(best_oob_df$Tree.Number))
+
+#still duplicate models w/ the lowest errors, so now selecting based on # of predictors = sqrt(p)
+best_tree_df = best_oob_df(largest_trees, )
+default_predictor_number = which(best_tree_df$Variable.Number == max(best_tree_df$Variable.Number))
+  
+reg_rf <- randomForest(as.formula(paste0(outcome, "~.")), data = data_train,
+                       ntree = best_tree_df$Tree.Number[default_predictor_number], mtry = best_tree_df$Variable.Number[default_predictor_number])
+
+#slipping into the module a math refresher here 
+
+#predicting on test set 
+data_test[[pred_outcome]] = predict(ref_rf, newdata = data_test, type = "response")
+
+matrix = confusionMatrix(data = data_test[pred_outcome], reference = data_test[Sex], 
+                         positive = "1")
+
+#calculating AUC
+auc = auc(response = data_test[[Sex]], predictor = factor(data_test[[pred_outcome]], ordered = TRUE))
+
+#calculating values to plot ROC curve later 
+roc_obj = roc(response = data_test[[Sex]], predictor = factor(data_test[[pred_outcome]], ordered = TRUE))
+
+#Return max Youden's index, with specificity and sensitivity 
+best_thres_data = data.frame(coords(roc_obj, x = "best", best.method = c("youden", "closest.topleft")))
+threshold.data = rbind(threshold.data, best_thres_data)
+
+# extracting accuracy, sens, spec, PPV to take mean later 
+matrix_values = data.frame(t(c(matrix$byClass[11])), t(c(matrix$byClass[1:3])), auc)
+
+#extracting variable importance
+var_importance_values = data.frame(importance(ref_rf)) %>%
+  rownames_to_column(var = "Predictor")
+variable_importance_df = rbind(variable_importance_df, var_importance_values)
+
+#adding values to df 
+metrics = rbind(metrics, matrix_values)
+  
+
+  }
+  
+# taking averages/sd
+metrics = metrics %>%
+    summarise("Balanced Accuracy" = mean(Balanced.Accuracy), Sensitivity = mean(Sensitivity), 
+              Specificity = mean(Specificity), PPV = mean(Pos.Pred.Value), AUC = mean(auc))
+  
+variable_importance_df = variable_importance_df %>%
+  group_by(Predictor) %>%
+  summarise(MeanDecreaseGini = mean(MeanDecreaseGini)) %>%
+  #sorting by most important variables
+  arrange(~MeanDecreaseGini)
+
+#return training set, matrix, variable importance values, (last) roc object, best threshold data 
+return(list(data_train, metrics, variable_importance_df, roc_obj, threshold.data))
+```
