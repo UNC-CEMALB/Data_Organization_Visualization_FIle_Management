@@ -127,6 +127,8 @@ pre.dataset %>%
   add_p(test = list(all_continuous() ~ "aov")) %>%
   as_tibble()
 ```
+## The Question: 
+Can we predict if a person is male or female based on their protein profile? 
 
 ## Making the Data wide
 
