@@ -2,8 +2,6 @@
 
 ## Machine Learning Recap
 
-## 
-
 Machine Learning is a field of study in computer science that involves creating algorithms(a set of instructions that perform a specific task on a given dataset). Machine Learning is a scientific approach that enables researchers to create models that can automatically adapt to new and unforeseen situations) capable of improving automatically through experience and data.
 
 In other words, instead of being explicitly programmed to perform a task, a machine learning algorithm is designed to learn from examples and data, allowing it to adapt and improve over time. This approach is particularly useful for tasks that are too complex or difficult to be solved using traditional programming methods.
@@ -67,3 +65,65 @@ Therefore, understanding linear algebra is essential for anyone working in field
 ## Specific Model: Decision Trees
 
 Now that we have discussed some of the basics of machine learning, we will focus the rest of our training on a specific model: Decision Trees and Random Forests.
+
+
+# Working with the data (work in progress)
+
+## Download Packages
+---
+```{r}
+install.packages("tidyverse")
+install.packages("pheatmap")
+install.packages("ggplot2")
+install.packages("reshape2")
+install.packages("arsenal")
+install.packages("superheat")
+
+library(tidyverse)
+library(pheatmap)
+library(ggplot2)
+library(reshape2)
+library(arsenal)
+library(superheat)
+library(readxl)
+library(gtsummary)
+library(e1071)
+library(Hmisc)
+library(glmnet)
+library(randomForest)
+library(pROC)
+library(lattice)
+library(survival)
+library(Formula)
+library(caret)
+```
+## Set working directory
+```{r}
+getwd()
+setwd("/Users/ritaavenbuan/Desktop")
+```
+
+
+## Retrieve Data 
+```{r}
+pre.dataset <-na.omit(read.csv("Proteomics_Imputed_PreExposureSubjects.csv"))
+post.dataset <-read.csv("Proteomics_Imputed_PostExposureSubjects.csv")
+```
+
+
+## Review your data 
+```{r}
+head(pre.dataset)
+```
+
+
+## Example statistical summmary
+```{r}
+pre.dataset %>%
+  tbl_summary(by = Sex, missing = "no",
+  include = colnames(pre.dataset[7:20]),
+    statistic = list(all_continuous() ~ "{mean} ({sd})")) %>%
+  add_n() %>%
+  add_p(test = list(all_continuous() ~ "aov")) %>%
+  as_tibble()
+```
