@@ -68,9 +68,12 @@ Therefore, understanding linear algebra is essential for anyone working in field
 
 ## Background on Data 
 
-Input data background here
+This dataset is the result of a human-exposure study, involving 27 participants, which investigated molecular alterations in sputum before and after exposure to smoldering red. Throughout the study, biological samples were collected from participants both before and after exposure. Demographic information was also gathered and the proteomic signatures in these samples were analyzed using high-resolution mass spectrometry. For the purpose of this training, we will be focusing solely on the pre-exposure data.
 
 ## Questions to answer 
+
+Based on the pre-exposure data, we want to address two questions centered around sex-differences. They include:
+
 1. Can we predict sex based on protein expression?
 2. Which proteins best predict sex? 
 
