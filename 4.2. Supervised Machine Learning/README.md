@@ -1,6 +1,10 @@
 # TAME Module 4.2: Supervised Machine Learning 
 
-## Machine Learning Recap
+This training module was developed by Oyemwenosa N. Avenbuan, Alexis Payton, and Dr. Julia E. Rager
+
+Spring 2023
+
+## Machine Learning Review
 
 Machine Learning is a field of study in computer science that involves creating algorithms(a set of instructions that perform a specific task on a given dataset). Machine Learning is a scientific approach that enables researchers to create models that can automatically adapt to new and unforeseen situations) capable of improving automatically through experience and data.
 
@@ -25,10 +29,12 @@ In the field of Machine Learning, there are two broad types of learning: supervi
 Supervised learning involves training a machine learning model using a labeled dataset, where each example is associated with a known outcome or target variable. The model is then able to learn how to predict the outcome for new, unseen examples based on the patterns and relationships it identifies in the data.
 
 ![image](https://user-images.githubusercontent.com/96756991/228424130-93542638-95f7-44c4-929d-871723b38a0f.png)
+Created with BioRender.com
 
 Unsupervised learning, on the other hand, involves training a machine learning model on an unlabeled dataset, where the outcome or target variable is unknown. The model is then tasked with identifying patterns and structures in the data, such as clusters of similar examples or underlying relationships between variables.
 
 ![image](https://user-images.githubusercontent.com/96756991/228424183-fdc60f87-f617-47e4-ab8e-f2cc9c1f1400.png)
+Created with BioRender.com
 
 It's worth noting that there are also other types of learning in Machine Learning, such as semi-supervised learning and reinforcement learning, which combine elements of both supervised and unsupervised learning.
 
@@ -70,6 +76,8 @@ Therefore, understanding linear algebra is essential for anyone working in field
 
 This dataset is the result of a human-exposure study, involving 27 participants, which investigated molecular alterations in sputum before and after exposure to smoldering red. Throughout the study, biological samples were collected from participants both before and after exposure. Demographic information was also gathered and the proteomic signatures in these samples were analyzed using high-resolution mass spectrometry. For the purpose of this training, we will be focusing solely on the pre-exposure data.
 
+This project meets the UNC’s IRB approval process (IRB# 13–3076 or 18-1895 or 18-2196)
+
 ## Questions to answer 
 
 Based on the pre-exposure data, we want to address two questions centered around sex-differences. They include:
@@ -77,14 +85,9 @@ Based on the pre-exposure data, we want to address two questions centered around
 1. Can we predict sex based on protein expression?
 2. Which proteins best predict sex? 
 
-## Specific Model: Decision Trees
-
-Now that we have discussed some of the basics of machine learning, we will focus the rest of our training on a specific model: Decision Trees and Random Forests.
-
-
 # Working with the data (work in progress)
 
-## Download Packages
+**Download Packages**
 ---
 ```{r}
 install.packages("tidyverse")
@@ -112,14 +115,15 @@ library(survival)
 library(Formula)
 library(caret)
 ```
-## Set working directory
+**Set working directory**
 ```{r}
 getwd()
 setwd("/Users/ritaavenbuan/Desktop")
 ```
 
+**Read in the Data & change sex into factors**
 
-## Read in the Data & Change sex into factors
+Changing Sex into factors will help the run the machine learning models run properly.
 
 ```{r}
 #set the working directory 
@@ -129,7 +133,7 @@ pre.dataset <- na.omit(read.csv("Proteomics_Imputed_PreExposureSubjects.csv")) %
   mutate(Sex = ifelse(Sex == "M", 1, 2))
 ```
 
-##Statistical Summary of Your Data
+**Statistical Summary of the Data**
 
 ```{r}
 pre.dataset %>%
@@ -143,15 +147,15 @@ pre.dataset %>%
 #post.dataset <-read.csv("Proteomics_Imputed_PostExposureSubjects.csv")
 ```
 
-## Review your data
+**Review the data**
 
 ```{r}
 head(pre.dataset)
 ```
 
-##KNN Recap
+**KNN Recap**
 
-Now, before we create a decision tree and random forest, I want to mention a type of algorithim that was mentioned previous KNN (K-nearest Neighbors). The concept of KNNs were explained in here, but there are multiple ways to train and test your data. It is important to be able to justify why the model you are using is better than the others that exist. By running KNN, I will get a better sense of if this model is a good fit for the type of data below.
+Before we create a decision tree and random forest, I want to mention a type of algorithim that was mentioned previous KNN (K-nearest Neighbors). The concept of KNNs were explained in here, but there are multiple ways to train and test your data. It is important to be able to justify why the model you are using is better than the others that exist. By running KNN, I will get a better sense of if this model is a good fit for the type of data below.
 
 ```{r}
 #make this reproducible
@@ -183,7 +187,7 @@ for (i in 1:length(per_class_accuracy)){
 
 per_class_accuracy
 
-#when running the KNN algorithm, I was having trouble finding a K that had a high accuracy. Every time I ran it, the most optimal (highest accuracy) K was 19 however, it exceeded the number of observations in the data set. 
+#Note to Alexis: when running the KNN algorithm, I was having trouble finding a K that had a high accuracy. Every time I ran it, the most optimal (highest accuracy) K was 19 however, it exceeded the number of observations in the data set. 
 ```
 
 Based on the results displayed above, it is apparent that the accuracy of the model is low. This indicates that the algorithm is recommending the creation of more clusters than there are samples available. My analysis suggests that the dataset may be too small and noisy, making it challenging to form relevant clusters. I have decided to explore other models, such as decision trees and random forests, to gain deeper insights into the data.
@@ -192,11 +196,12 @@ Now that we have ruled out using the KNN algorithim, we iwll move onto creating 
 
 Now that we have eliminated the KNN algorithm as a viable option, we will proceed to develop a decision tree and random forest. These models will enable us to evaluate their effectiveness in analyzing the dataset and determine whether they are better suited for our task.
 
-##Decision Trees 
+**Decision Tree **
 
 A Decision Tree is a type of supervised machine learning model that makes predictions based on how a question was answered. 
 
 ![image](https://user-images.githubusercontent.com/96756991/228426001-9a73d4b5-017c-430b-b48f-0aa91dedc4ea.png)
+Created with BioRender.com
 
 _Root node:_ Base of the Decision Tree 
 _Splitting:_ A node divided into sub-nodes 
@@ -209,7 +214,8 @@ _Pruning:_ The process of removing sub-nodes of a decision tree
 In this module, we will start by creating a decision without any pruning.
 
 ```{r}
-#Single Decision Tree (no pruning)
+
+_Creating a decision tree (no pruning)_
 
 #set up for reproducibility 
 set.seed(15)
@@ -244,7 +250,7 @@ unpruned_errors %>%
   
 ```
 
-Now, we will prune the Decision Tree
+_Pruning the decision tree_
 
 ```{r}
 #Predicting Sex using a decision tree but we 
@@ -303,13 +309,14 @@ pruned_errors %>%
 
 ```
 
-Add explanation of CV here
+**Random Forest**
 
-##Random Forest
+Random Forest combines the outcome of many decisions trees and creates a single result. 
 
-What is a Random Forest (Def)
+![image](https://user-images.githubusercontent.com/96756991/228436169-c7fe932a-9aa4-41e2-b56c-9a8830b834a8.png)
+Created with BioRender.com
 
-Beginning the Random Forest Code
+Random Forest Code (in progress)
 
 ```{r}
 rf_classification = function(pre.dataset, outcome, pred_outcome) {
