@@ -1,4 +1,4 @@
-# TAME Module 4.2: Supervised Machine Learning 
+4.2: Supervised Machine Learning 
 
 This training module was developed by Oyemwenosa N. Avenbuan, Alexis Payton, and Dr. Julia E. Rager
 
