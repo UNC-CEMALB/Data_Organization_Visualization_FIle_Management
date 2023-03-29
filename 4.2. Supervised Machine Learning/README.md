@@ -26,12 +26,12 @@ Ultimately, Machine Learning is a powerful tool that enables researchers to anal
 
 In the field of Machine Learning, there are two broad types of learning: supervised learning and unsupervised learning.
 
-Supervised learning involves training a machine learning model using a labeled dataset, where each example is associated with a known outcome or target variable. The model is then able to learn how to predict the outcome for new, unseen examples based on the patterns and relationships it identifies in the data.
+**Supervised learning** involves training a machine learning model using a labeled dataset, where each example is associated with a known outcome or target variable. The model is then able to learn how to predict the outcome for new, unseen examples based on the patterns and relationships it identifies in the data.
 
 ![image](https://user-images.githubusercontent.com/96756991/228436976-ec715a4f-575f-4718-89d6-6233695fcd7f.png)
 Created with BioRender.com
 
-Unsupervised learning, on the other hand, involves training a machine learning model on an unlabeled dataset, where the outcome or target variable is unknown. The model is then tasked with identifying patterns and structures in the data, such as clusters of similar examples or underlying relationships between variables.
+**Unsupervised learning**, on the other hand, involves training a machine learning model on an unlabeled dataset, where the outcome or target variable is unknown. The model is then tasked with identifying patterns and structures in the data, such as clusters of similar examples or underlying relationships between variables.
 
 ![image](https://user-images.githubusercontent.com/96756991/228424183-fdc60f87-f617-47e4-ab8e-f2cc9c1f1400.png)
 Created with BioRender.com
@@ -212,6 +212,8 @@ _Pruning:_ The process of removing sub-nodes of a decision tree
 
 In this module, we will start by creating a decision without any pruning.
 
+https://www.mastersindatascience.org/learning/machine-learning-algorithms/decision-tree/
+
 ```{r}
 
 _Creating a decision tree (no pruning)_
@@ -314,6 +316,8 @@ Random Forest combines the outcome of many decisions trees and creates a single 
 
 ![image](https://user-images.githubusercontent.com/96756991/228436169-c7fe932a-9aa4-41e2-b56c-9a8830b834a8.png)
 Created with BioRender.com
+
+https://www.ibm.com/topics/random-forest
 
 Random Forest Code (in progress)
 
