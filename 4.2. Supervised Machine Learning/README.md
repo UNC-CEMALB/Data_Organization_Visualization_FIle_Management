@@ -85,10 +85,9 @@ Based on the pre-exposure data, we want to address two questions centered around
 1. Can we predict sex based on protein expression?
 2. Which proteins best predict sex? 
 
-# Working with the data (work in progress)
+## Working with the data (work in progress)
 
 **Download Packages**
----
 ```{r}
 install.packages("tidyverse")
 install.packages("pheatmap")
@@ -155,7 +154,7 @@ head(pre.dataset)
 
 **KNN Recap**
 
-Before we create a decision tree and random forest, I want to mention a type of algorithim that was mentioned previous KNN (K-nearest Neighbors). The concept of KNNs were explained in here, but there are multiple ways to train and test your data. It is important to be able to justify why the model you are using is better than the others that exist. By running KNN, I will get a better sense of if this model is a good fit for the type of data below.
+Before we create a decision tree and random forest, we want to mention a type of algorithim that was mentioned [previously]([url](https://uncsrp.github.io/Data-Analysis-Training-Modules/machine-learning-and-predictive-modeling.html#k-means-analysis)) KNN (K-nearest Neighbors). The concept of KNNs were explained in here, but there are multiple ways to train and test your data. It is important to be able to justify why the model you are using is better than the others that exist. By running KNN, we will get a better sense of if this model is a good fit for the type of data below.
 
 ```{r}
 #make this reproducible
