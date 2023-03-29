@@ -24,7 +24,11 @@ In the field of Machine Learning, there are two broad types of learning: supervi
 
 Supervised learning involves training a machine learning model using a labeled dataset, where each example is associated with a known outcome or target variable. The model is then able to learn how to predict the outcome for new, unseen examples based on the patterns and relationships it identifies in the data.
 
+![image](https://user-images.githubusercontent.com/96756991/228424130-93542638-95f7-44c4-929d-871723b38a0f.png)
+
 Unsupervised learning, on the other hand, involves training a machine learning model on an unlabeled dataset, where the outcome or target variable is unknown. The model is then tasked with identifying patterns and structures in the data, such as clusters of similar examples or underlying relationships between variables.
+
+![image](https://user-images.githubusercontent.com/96756991/228424183-fdc60f87-f617-47e4-ab8e-f2cc9c1f1400.png)
 
 It's worth noting that there are also other types of learning in Machine Learning, such as semi-supervised learning and reinforcement learning, which combine elements of both supervised and unsupervised learning.
 
