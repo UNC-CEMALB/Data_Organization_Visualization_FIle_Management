@@ -70,7 +70,7 @@ One of the key concepts in linear algebra is the notion of linear transformation
 
 Therefore, understanding linear algebra is essential for anyone working in fields that rely on data analysis and modeling, such as machine learning and artificial intelligence.
 
-[Reference]([url](https://www.britannica.com/science/linear-algebra))
+[Reference](https://www.britannica.com/science/linear-algebra)
 
 ## Background on Data 
 
@@ -212,7 +212,7 @@ _Pruning:_ The process of removing sub-nodes of a decision tree
 
 In this module, we will start by creating a decision without any pruning.
 
-[Reference]([url](https://www.mastersindatascience.org/learning/machine-learning-algorithms/decision-tree/))
+[Reference](https://www.mastersindatascience.org/learning/machine-learning-algorithms/decision-tree/)
 
 ```{r}
 
@@ -317,7 +317,7 @@ Random Forest combines the outcome of many decisions trees and creates a single 
 ![image](https://user-images.githubusercontent.com/96756991/228436169-c7fe932a-9aa4-41e2-b56c-9a8830b834a8.png)
 Created with BioRender.com
 
-[Reference]([url](https://www.ibm.com/topics/random-forest)) 
+[Reference](https://www.ibm.com/topics/random-forest) 
 
 Random Forest Code (in progress)
 
