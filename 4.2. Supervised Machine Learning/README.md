@@ -195,7 +195,7 @@ Now that we have ruled out using the KNN algorithim, we iwll move onto creating 
 
 Now that we have eliminated the KNN algorithm as a viable option, we will proceed to develop a decision tree and random forest. These models will enable us to evaluate their effectiveness in analyzing the dataset and determine whether they are better suited for our task.
 
-**Decision Tree **
+**Decision Tree**
 
 A Decision Tree is a type of supervised machine learning model that makes predictions based on how a question was answered. 
 
