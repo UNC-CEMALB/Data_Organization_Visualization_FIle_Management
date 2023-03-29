@@ -40,11 +40,11 @@ In Machine Learning, before we can effectively use algorithms to analyze data, w
 
 In Machine Learning, the process of developing a model involves dividing the data into three distinct sets:
 
-1\. the training set: a subset of the data that is used to fit the model. Essentially, the model learns from this data and uses it to identify patterns and relationships in the data.
+1\.**The training set:** a subset of the data that is used to fit the model. Essentially, the model learns from this data and uses it to identify patterns and relationships in the data.
 
-2\. the validation set: a sample of data that is used to evaluate the model's fit in an unbiased way. It helps develop the model by fine-tuning its parameters and optimizing its performance. This is akin to pop-quizzes that help students improve their understanding and performance.
+2\. **The validation set:** a sample of data that is used to evaluate the model's fit in an unbiased way. It helps develop the model by fine-tuning its parameters and optimizing its performance. This is akin to pop-quizzes that help students improve their understanding and performance.
 
-3\. test set: a sample of data that is used to provide an evaluation of the final model's fit on the training set. This is the model's final exam, as it provides an objective assessment of the model's ability to generalize to new, unseen data.
+3\. **The test set:** a sample of data that is used to provide an evaluation of the final model's fit on the training set. This is the model's final exam, as it provides an objective assessment of the model's ability to generalize to new, unseen data.
 
 It's important to note that the test set should only be used once, after the model has been fully developed and fine-tuned on the training and validation sets. Using the test set multiple times during the development process can lead to overfitting, where the model performs well on the test data but poorly on new, unseen data.
 
@@ -65,6 +65,14 @@ One of the key concepts in linear algebra is the notion of linear transformation
 Therefore, understanding linear algebra is essential for anyone working in fields that rely on data analysis and modeling, such as machine learning and artificial intelligence.
 
 ([https://www.britannica.com/science/linear-algebra)](https://www.britannica.com/science/linear-algebra))
+
+## Background on Data 
+
+Input data background here
+
+## Questions to answer 
+1. Can we predict sex based on protein expression?
+2. Which proteins best predict sex? 
 
 ## Specific Model: Decision Trees
 
@@ -183,9 +191,19 @@ Now that we have eliminated the KNN algorithm as a viable option, we will procee
 
 ##Decision Trees 
 
-Add Definition and Figure Here (with Explanation)
+A Decision Tree is a type of supervised machine learning model that makes predictions based on how a question was answered. 
 
-In this module, we will start by creating a decicion without any pruning.
+![image](https://user-images.githubusercontent.com/96756991/228426001-9a73d4b5-017c-430b-b48f-0aa91dedc4ea.png)
+
+_Root node:_ Base of the Decision Tree 
+_Splitting:_ A node divided into sub-nodes 
+_Decision mode:_ A sub-node broken down into additional sub-nodes
+_Leaf node:_ A sub-node that does not split into additional sub-nodes (terminal node). It indicates a potential outcome. 
+_Pruning:_ Removing sub-nodes of a decision tree
+_Branch:_ A section of a decision tree with multiple nodes
+_Pruning:_ The process of removing sub-nodes of a decision tree
+
+In this module, we will start by creating a decision without any pruning.
 
 ```{r}
 #Single Decision Tree (no pruning)
@@ -222,8 +240,6 @@ unpruned_errors %>%
   flextable()
   
 ```
-
-Add what the CV means
 
 Now, we will prune the Decision Tree
 
