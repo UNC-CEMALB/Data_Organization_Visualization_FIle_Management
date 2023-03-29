@@ -202,13 +202,13 @@ A Decision Tree is a type of supervised machine learning model that makes predic
 ![image](https://user-images.githubusercontent.com/96756991/228426001-9a73d4b5-017c-430b-b48f-0aa91dedc4ea.png)
 Created with BioRender.com
 
-_Root node:_ Base of the Decision Tree 
-_Splitting:_ A node divided into sub-nodes 
-_Decision mode:_ A sub-node broken down into additional sub-nodes
-_Leaf node:_ A sub-node that does not split into additional sub-nodes (terminal node). It indicates a potential outcome. 
-_Pruning:_ Removing sub-nodes of a decision tree
-_Branch:_ A section of a decision tree with multiple nodes
-_Pruning:_ The process of removing sub-nodes of a decision tree
+- _Root node:_ Base of the Decision Tree 
+- _Splitting:_ A node divided into sub-nodes 
+- _Decision mode:_ A sub-node broken down into additional sub-nodes
+- _Leaf node:_ A sub-node that does not split into additional sub-nodes (terminal node). It indicates a potential outcome. 
+- _Pruning:_ Removing sub-nodes of a decision tree
+- _Branch:_ A section of a decision tree with multiple nodes
+- _Pruning:_ The process of removing sub-nodes of a decision tree
 
 In this module, we will start by creating a decision without any pruning.
 
