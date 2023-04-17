@@ -75,7 +75,7 @@ Overall, the process of dividing the data into training, validation, and test se
 [Reference](<https://towardsdatascience.com/train-validation-and-test-sets-72cb40cba9e7>) 
 
 
-**Other Supervised Machine Learning Algorithms**
+## Other Supervised Machine Learning Algorithms
 
 Before we create a decision tree and random forest, we want to mention other popular algorithims that can be used in supervised machine learning. Two models that are good to know are: 
 
