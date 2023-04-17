@@ -14,7 +14,7 @@ Through Machine Learning, scientists can:
 
 1\. Create a model that adapts to new circumstances that the scientist did not envision.
 
-2\.Detect patterns in large and complex datasets.
+2\. Detect patterns in large and complex datasets.
 
 3\. Evaluate the effectiveness of these patterns. 
 
@@ -45,6 +45,15 @@ Created with BioRender.com
 It's worth noting that there are also other types of learning in Machine Learning, such as semi-supervised learning and reinforcement learning, which combine elements of both supervised and unsupervised learning.
 
 Overall, the distinction between supervised and unsupervised learning is an important concept in Machine Learning, as it can inform the choice of algorithms and techniques used to analyze and make predictions from data.
+
+To learn more about Machine Learning visit the following websites: 
+
+1. [Machine Learning Mastery ](https://machinelearningmastery.com/machine-learning-in-r-step-by-step/)
+2. [Master in Data Science](https://www.mastersindatascience.org/learning/machine-learning-algorithms/decision-tree/)
+3. [IBM - Random Forest](https://www.ibm.com/in-en/topics/random-forest)
+4. [IBM - What is Machine Learning](https://www.ibm.com/topics/machine-learning)
+
+You can also read about Machine Learning by Mueller, J. P. (2021). Machine learning for dummies. John Wiley &amp; Sons. 
 
 ## Training Your Model
 
@@ -431,14 +440,14 @@ rf_classification = function(pre.dataset, outcome, pred_outcome) {
 **Mean decrease accuracy**
 
 Mean decrease accuracy tells us how important each feature is in making accurate predictions. A higher mean decrease accuracy score indicates that a feature is more important in making predictions, while a lower score means it's less important. With this particular dataset, we see that proteins such as DCXR, GBP6, HPR, PSME1, DNAJA4, GSTP1, DDT, KRT7, CTNNA1, and KRT18 are proteins that best predict sex differences.
-[Reference] (https://plos.figshare.com/articles/figure/Variable_importance_plot_mean_decrease_accuracy_and_mean_decrease_Gini_/12060105/1)
+[Reference](https://plos.figshare.com/articles/figure/Variable_importance_plot_mean_decrease_accuracy_and_mean_decrease_Gini_/12060105/1)
 
 **Mean decrease Gini**
 
 The mean decrease in Gini is based on the decrease in the Gini impurity index, and it measures how each predictor contributes to the purity of the nodes in the decision trees. In other words, the mean decrease Gini score tells us how important a feature is in making decisions in the dataset. The higher the score, the more important the feature is in making decisions and splitting the data. Our data shows that HPR, DCXR, PSMB7, KRT15, HYOU1, and GBP6 are essential proteins for making decisions in this dataset.
-[Reference] (https://www.analyticsvidhya.com/blog/2021/03/how-to-select-best-split-in-decision-trees-gini-impurity/)
+[Reference](https://www.analyticsvidhya.com/blog/2021/03/how-to-select-best-split-in-decision-trees-gini-impurity/)
 
-**Random Confusion Matrix**
+**Random Forest Confusion Matrix**
 
 ```{r}
 # Create folds for cross-validation
@@ -485,3 +494,19 @@ Mean Specificity: 0.65 ± 0.3555122
 ```
 
 By comparing the mean accuracy of the Random Forest Model to the Decision Tree, we find that the Decision Tree achieved higher accuracy with this dataset. This indicates that, for this specific dataset, a Decision Tree would be the more appropriate model to use for predicting our data. Considering the relatively low number of observations in the dataset (27), we may not have sufficient data to support the use of a robust Random Forest model.
+
+
+## Test Your Knowledge 
+
+Using the Post-exposure data provided, create a decision tree and random forest model to answer the following questions:
+
+1. Can we predict sex based on protein expression?
+2. Which proteins best predict sex? 
+3. Which model is more appropriate for predicting the first two outcomes? 
+
+
+## Conclusion 
+
+In conclusion, this training module has provided an informative introduction to supervised machine learning using classification techniques in R. Machine learning is a powerful tool that can help researchers gain new insights and improve models to analyze complex datasets better. The example we've explored demonstrates the utility of machine learning models for better understanding data with numerous features.
+
+This module also offers valuable resources that can serve as a guide to learning more about machine learning and its application to environmental health science research. By leveraging machine learning techniques, researchers can unlock new avenues for exploration and contribute to a deeper understanding of complex environmental health issues.
