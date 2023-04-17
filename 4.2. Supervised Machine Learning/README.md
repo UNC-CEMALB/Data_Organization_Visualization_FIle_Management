@@ -34,7 +34,8 @@ Supervised Learning can either be:
 
 ![image](https://user-images.githubusercontent.com/96756991/228436976-ec715a4f-575f-4718-89d6-6233695fcd7f.png)
 Created with BioRender.com
-[Reference] (https://www.ibm.com/cloud/blog/supervised-vs-unsupervised-learning)
+
+[Reference](https://www.ibm.com/cloud/blog/supervised-vs-unsupervised-learning)
 
 
 **Unsupervised learning**, on the other hand, involves training a machine learning model on an unlabeled dataset, where the outcome or target variable is unknown. The model is then tasked with identifying patterns and structures in the data, such as clusters of similar examples or underlying relationships between variables.
