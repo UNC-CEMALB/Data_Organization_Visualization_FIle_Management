@@ -28,8 +28,13 @@ In the field of Machine Learning, there are two broad types of learning: supervi
 
 **Supervised learning** involves training a machine learning model using a labeled dataset, where each example is associated with a known outcome or target variable. The model is then able to learn how to predict the outcome for new, unseen examples based on the patterns and relationships it identifies in the data.
 
+Supervised Learning can either be: 
+1. Classification: Using algorithms to classify categories based on various characteristics
+2. Regression: Using algorithms to understand the relationship between independent and dependent variables
+
 ![image](https://user-images.githubusercontent.com/96756991/228436976-ec715a4f-575f-4718-89d6-6233695fcd7f.png)
 Created with BioRender.com
+[Reference] (https://www.ibm.com/cloud/blog/supervised-vs-unsupervised-learning)
 
 **Unsupervised learning**, on the other hand, involves training a machine learning model on an unlabeled dataset, where the outcome or target variable is unknown. The model is then tasked with identifying patterns and structures in the data, such as clusters of similar examples or underlying relationships between variables.
 
@@ -58,19 +63,30 @@ Overall, the process of dividing the data into training, validation, and test se
 
 [Reference](<https://towardsdatascience.com/train-validation-and-test-sets-72cb40cba9e7>) 
 
-## The Math Behind Models
 
-Linear algebra is a branch of mathematics that studies the properties and behavior of mathematical objects called vectors and matrices.
+**Other Supervised Machine Learning Algorithms**
 
-Vectors are essentially a list of numbers that represent quantities that have both magnitude and direction, such as velocity or force.
+Before we create a decision tree and random forest, we want to mention other popular algorithims that can be used in supervised machine learning. Two models that are good to know are: 
 
-Matrices, on the other hand, are like tables of numbers arranged in rows and columns, which can be used to represent data or perform operations on vectors.
+1\. **K-nearest Neighbors(KNN):** Uses proximity to make predictions/classify data points 
+![image](https://user-images.githubusercontent.com/96756991/232493057-1e7ce98b-6985-44cd-98a9-3cfea5994659.png)
+A simple illustration of KNN 
 
-One of the key concepts in linear algebra is the notion of linear transformations, which are functions that preserve the properties of vectors and matrices, such as their linearity and dimensionality. Another important aspect of linear algebra is matrix multiplication, addition, and subtraction, which are operations used to manipulate matrices and are fundamental to many mathematical applications, including neural networks.
+Created with BioRender.com
+[Reference](https://www.ibm.com/topics/knn)
 
-Therefore, understanding linear algebra is essential for anyone working in fields that rely on data analysis and modeling, such as machine learning and artificial intelligence.
+2\. **Support Vector Machines(SVM):** Creates best decision boundary line (hyperplane) in n-dimensional space that seperates points into categories so that when new data is presented they can be easily cateogrized. 
+![image](https://user-images.githubusercontent.com/96756991/232492988-6da14533-5d09-4bc7-8230-3d680e0fa82b.png)
+A simple illustration of SVM 
 
-[Reference](https://www.britannica.com/science/linear-algebra)
+Created with BioRender.com
+[Reference](https://www.javatpoint.com/machine-learning-support-vector-machine-algorithm)
+
+While neither of these algorithms will be used in this training, they are important algorithms that you may come across as you continue on learning and using machine learning. 
+
+## Confusion Matrix 
+
+Before we get into our data and begin to train our model, we want to introduce one more concept that is important when running  
 
 ## Background on Data 
 
@@ -84,6 +100,8 @@ Based on the pre-exposure data, we want to address two questions centered around
 
 1. Can we predict sex based on protein expression?
 2. Which proteins best predict sex? 
+
+Using A decision tree we will be able to answer question 1 and using a random forest, we will be able to answer question 2.  
 
 ## Working with the data (work in progress)
 
@@ -125,11 +143,14 @@ setwd("/Users/ritaavenbuan/Desktop")
 Changing Sex into factors will help the run the machine learning models run properly.
 
 ```{r}
-#set the working directory 
+#import the data and remove variables that are not going to be useful for your analysis
 pre.dataset <- na.omit(read.csv("Proteomics_Imputed_PreExposureSubjects.csv")) %>%
   select(-SubjectID, -Race, -Ethnicity, -Age, -BMI) %>%
-  drop_na() %>%
-  mutate(Sex = ifelse(Sex == "M", 1, 2))
+  drop_na() 
+
+#change the class of Sex (from characters to factors)
+class(pre.dataset$Sex)
+pre.dataset$Sex <- as.factor(pre.dataset$Sex)
 ```
 
 **Statistical Summary of the Data**
@@ -152,48 +173,6 @@ pre.dataset %>%
 head(pre.dataset)
 ```
 
-**KNN Recap**
-
-Before we create a decision tree and random forest, we want to mention a type of algorithim that was mentioned [previously]([url](https://uncsrp.github.io/Data-Analysis-Training-Modules/machine-learning-and-predictive-modeling.html#k-means-analysis)) KNN (K-nearest Neighbors). The concept of KNNs were explained in here, but there are multiple ways to train and test your data. It is important to be able to justify why the model you are using is better than the others that exist. By running KNN, we will get a better sense of if this model is a good fit for the type of data below.
-
-```{r}
-#make this reproducible
-set.seed(15)
-
-#splitting the data into training and testing sets 
-sex_df_index = createDataPartition(pre.dataset$Sex, p = 0.6, list = FALSE)
-sex_train = pre.dataset[sex_df_index,]
-sex_test = pre.dataset[sex_df_index,]
-
-
-#training the algorithm
-knn_sex = train(Sex ~., data = pre.dataset, method = "knn", tuneLength = 8 , preProcess = c("center", "scale"))
-
-#printing overall accuracies for all tuning parameter 
-knn_sex$results[,1:2] #best model: k = 23
-
-#testing algorithm on test set and printing accuracys with the best tuning parameter 
-sex_test$sex_pred = predict(knn_sex, newdata = sex_test)
-per_class_accuracy <- rep(NA, length(levels(sex_test$Sex)))
-for (i in 1:length(per_class_accuracy)){
-  per_class_accuracy[i] <-
-    sex_test %>%
-    filter(Sex == levels(Sex)[i]) %>%
-    summarise(accuracy = sum(sex_pred ==levels(Sex)[i])/n()) %>%
-    unlist()
-  names(per_class_accuracy)[i] <- paste0(levels(sex_test$Sex)[i], "Accuracy")
-}
-
-per_class_accuracy
-
-#Note to Alexis: when running the KNN algorithm, I was having trouble finding a K that had a high accuracy. Every time I ran it, the most optimal (highest accuracy) K was 19 however, it exceeded the number of observations in the data set. 
-```
-
-Based on the results displayed above, it is apparent that the accuracy of the model is low. This indicates that the algorithm is recommending the creation of more clusters than there are samples available. My analysis suggests that the dataset may be too small and noisy, making it challenging to form relevant clusters. I have decided to explore other models, such as decision trees and random forests, to gain deeper insights into the data.
-
-Now that we have ruled out using the KNN algorithim, we iwll move onto creating a decision tree and random forest and be able to test if these are better models for the dataset.
-
-Now that we have eliminated the KNN algorithm as a viable option, we will proceed to develop a decision tree and random forest. These models will enable us to evaluate their effectiveness in analyzing the dataset and determine whether they are better suited for our task.
 
 **Decision Tree**
 
@@ -210,105 +189,116 @@ Created with BioRender.com
 - _Branch:_ A section of a decision tree with multiple nodes
 - _Pruning:_ The process of removing sub-nodes of a decision tree
 
-In this module, we will start by creating a decision without any pruning.
+In this module, we will start by creating decision tree. 
 
 [Reference](https://www.mastersindatascience.org/learning/machine-learning-algorithms/decision-tree/)
 
+**Set up for Reproducibility**
 ```{r}
-
-_Creating a decision tree (no pruning)_
+#Creating a Decision Tree with Confusion Matrix
 
 #set up for reproducibility 
 set.seed(15)
+control_params <- rpart.control(minsplit = 5)
 
-#splitting data into training and testing sets 
+```
+
+**Splitting data into testing and training set**
+In this step we want to split the data into the training set (what the algorithm will use to learn data) and the test set. We also want to make sure that we are cross-validating here. 
+
+_Cross-validate:_ The ability for the machine to predict new data and test its accuracy. We want to make sure our model is not overfitting (giving accurate results for predictions for training data but not new data). 
+[Reference](https://learn.g2.com/cross-validation)
+
+```{r}
 sex_data_index = createFolds(pre.dataset$Sex, k = 5) #K in Cross Validation is usually 5 or 10 
 errors = data.frame()
 for (i in 1:length(sex_data_index)){
   sex_train = pre.dataset[-sex_data_index[[i]],]
   sex_test = pre.dataset[sex_data_index[[i]],]
   
-  reg_tree = rpart(Sex ~., data = sex_train)
+  reg_tree = rpart(Sex ~., data = sex_train, method = "class", control = control_params)
   
-  #predicting on test set 
-  sex_test$sex_pred = predict(reg_tree, newdata = sex_test)
+  vim <- varImp(reg_tree)
   
-  #calculating MSE (add definition)
-  error_values = postResample(sex_test$sex_pred, sex_test$Sex)
+  pred_tree <- predict(reg_tree, sex_test, type = "class", na.action = na.pass)
   
-  #adding values to data frame created above 
-  errors = rbind(errors, error_values[1]^2)
+  cm_tree <- confusionMatrix(pred_tree, sex_test$Sex)
+  
+  accuracy_tree <- cm_tree$overall["Accuracy"]
 }
-
-colnames(errors) = c("MSE")
-  
-#taking averages/sd by method
-unpruned_errors = errors %>%
- summarise("CV Error" = mean(MSE), "Std Error" = sd(MSE))
-
-unpruned_errors %>%
-  flextable()
-  
 ```
 
-_Pruning the decision tree_
+**Preform Confusion Matrix**
+
 
 ```{r}
-#Predicting Sex using a decision tree but we 
+#perform confusion matrix 
+# Set the number of folds for cross-validation
+k <- 5
 
-#set up for reproducibility 
-set.seed(15)
+# Create the folds
+folds <- cut(seq(1, nrow(pre.dataset)), breaks = k, labels = FALSE)
 
-#splitting data into training and testing sets 
-sex_data_index1 = createFolds(pre.dataset$Sex, k = 5) #K in Cross Validation is usually 5 or 10 
-errors1 = data.frame()
-for (i in 1:length(sex_data_index1)){
-  sex_train1 = pre.dataset[-sex_data_index1[[i]],]
-  sex_test1 = pre.dataset[sex_data_index1[[i]],]
-  
-  #omit missing imputations
-  sex_test1 <- na.omit(sex_test1)
+# Initialize an empty list to store the evaluation metrics for each fold
+eval_metrics <- list()
 
-  # Convert the outcome variable to a factor with two levels
-  sex_train1$Sex <- factor(sex_train1$Sex, levels = c("1", "2")) # 0 is male, 1 is female
-
-  #now pruning the tree (in this method a new alpha is used everytime)
-  reg_tree_pruned <- train(Sex ~., data = sex_train1, method = "rpart", 
-                           trControl = trainControl("cv", number = 10),
-                           tuneGrid = data.frame(cp = seq(0, 0.1, 0.01)), 
-                           control = rpart.control(cp = 0), tuneLength = 10)
+# Loop over each fold
+for (i in 1:k) {
   
-  #predicting on test set 
-  sex_test1$sex_pred = predict(reg_tree_pruned, newdata = sex_test1, type="raw")
+  # Split the data into training and validation sets for this fold
+  train_indices <- which(folds != i)
+  valid_indices <- which(folds == i)
+  sex_train <- pre.dataset[train_indices, ]
+  sex_valid <- pre.dataset[valid_indices, ]
   
-  # Convert the predicted outcome to a factor variable
-  sex_test1$sex_pred <- factor(sex_test1$sex_pred, levels = c("1", "2")) # 1 is male, 2 is female
+  # Fit the decision tree model on the training set
+  reg_tree <- rpart(Sex ~., data = sex_train, method = "class", control = rpart.control(minsplit = 5))
   
-  # Convert actual values to factor and then to numeric
-  sex_test1$Sex <- factor(sex_test1$Sex, levels = c("1", "2")) # 0 is male, 1 is female
-  sex_test1$Sex <- as.numeric(sex_test1$Sex)
+  # Make predictions on the validation set
+  pred_tree <- predict(reg_tree, sex_valid, type = "class")
   
-  # Convert predicted values to factor and then to numeric
-  sex_test1$sex_pred <- factor(sex_test1$sex_pred, levels = c("1", "2")) # 0 is male, 1 is female
-  sex_test1$sex_pred <- as.numeric(sex_test1$sex_pred)
-  
-  #calculating MSE
-  error_values = postResample(sex_test1$sex_pred, sex_test1$Sex)
-  
-  #adding values to df
-  errors1 = rbind(errors1, error_values[1]^2)
+  # Compute the evaluation metrics for this fold
+  cm_tree <- confusionMatrix(pred_tree, sex_valid$Sex)
+  eval_metrics[[i]] <- c(accuracy = cm_tree$overall['Accuracy'], 
+                         sensitivity = cm_tree$byClass['Sensitivity'],
+                         specificity = cm_tree$byClass['Specificity'])
 }
 
-colnames(errors1) = c("MSE")
+# Calculate the average evaluation metrics across all folds
+eval_metrics <- do.call(rbind, eval_metrics)
+avg_eval_metrics <- colMeans(eval_metrics)
 
-#taking averages/sd by method 
-pruned_errors = errors1 %>%
-  summarise("CV Error" = mean(as.numeric(MSE), na.rm = TRUE), "Std Error" = sd(as.numeric(MSE), na.rm = TRUE)) #I was getting an error while using summarize
-
-pruned_errors %>%
-  flextable()
-
+#confusion matrix results
+print(cm_tree)
 ```
+Confusion Matrix and Statistics
+
+          Reference
+Prediction F M
+         F 2 0
+         M 3 1
+                                          
+               Accuracy : 0.5             
+                 95% CI : (0.1181, 0.8819)
+    No Information Rate : 0.8333          
+    P-Value [Acc > NIR] : 0.9913          
+                                          
+                  Kappa : 0.1818          
+                                          
+ Mcnemar's Test P-Value : 0.2482          
+                                          
+            Sensitivity : 0.4000          
+            Specificity : 1.0000          
+         Pos Pred Value : 1.0000          
+         Neg Pred Value : 0.2500          
+             Prevalence : 0.8333          
+         Detection Rate : 0.3333          
+   Detection Prevalence : 0.3333          
+      Balanced Accuracy : 0.7000          
+                                          
+       'Positive' Class : F               
+                                          
+Based on our confusion matrix, we have 50% accuracy which means that our model is accurately classifying proteins based on sex 50% of the time. We are going to now run a more robust model Random Foreset to see if our accuracy increases and to see which proteins best predict sex.  
 
 **Random Forest**
 
