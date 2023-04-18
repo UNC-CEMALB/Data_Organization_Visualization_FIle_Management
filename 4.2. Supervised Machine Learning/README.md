@@ -133,7 +133,7 @@ Based on the pre-exposure data, we want to address two questions centered around
 
 Using A decision tree we will be able to answer question 1 and using a random forest, we will be able to answer question 2.  
 
-## Working with the data (work in progress)
+## Working with the data 
 
 **Download Packages**
 ```{r}
