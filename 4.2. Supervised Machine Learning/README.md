@@ -87,7 +87,7 @@ Created with BioRender.com
 [Reference](https://www.ibm.com/topics/knn)
 
 2\. **Support Vector Machines(SVM):** Creates best decision boundary line (hyperplane) in n-dimensional space that seperates points into categories so that when new data is presented they can be easily cateogrized. 
-![image](https://user-images.githubusercontent.com/96756991/232492988-6da14533-5d09-4bc7-8230-3d680e0fa82b.png)
+![image](https://user-images.githubusercontent.com/96756991/233735220-08682ea4-fe13-41c8-8ac5-9ddda7859328.png)
 A simple illustration of SVM 
 
 Created with BioRender.com
