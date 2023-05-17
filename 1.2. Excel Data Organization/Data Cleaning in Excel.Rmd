@@ -1,4 +1,4 @@
-# Data Organization in Excel
+# Data Cleaning in Excel
 
 This training module was developed by Alexis Payton and Dr. Julia E. Rager
 
@@ -19,16 +19,16 @@ The following steps are by no means exhaustive! Rather use this dataset as an ex
 > Open Excel and prior to **ANY** edits, click “File” --> “Save As” to save a new version of the file that serve as the cleaned version of the data.
    > - This is very important in the instance that the original version needs to be referred back to (ie. if data is accidently deleted). 
 > The file needs to be named something indicative of the data it contains followed by the current date (ie. "Allostatic Mediator Data_061622"). 
-    - The title should be succinct and descriptive. 
-    - It's okay to use dashes or underscores in the name of the title, but stay away from special characters.
+    >- The title should be succinct and descriptive. 
+    >- It's okay to use dashes or underscores in the name of the title, but stay away from special characters.
 
-<img src="2. Screenshots/Picture1.png"  />
+<img src="Screenshots/Picture1.png"  />
 
 ###  Remove extraneous white space
-> Remove the entirely blank rows of cells
+> Remove the entirely blank rows of cells. This not only makes the data look more tidy, it reduces the file size and allows for the use of the filter function in Excel which will be used in the next few steps. 
   >  - Excel Trick: Select all lines that need to be removed and press Ctrl + - (minus key) for Mac users. 
 
-<img src="2. Screenshots/Picture2.png" />
+<img src="Screenshots/Picture2.png" />
 
 
 ### Replace missing data with “NA”
@@ -37,12 +37,12 @@ The following steps are by no means exhaustive! Rather use this dataset as an ex
 ### Create a metadata tab
 > Metadata explains what each column represents in the dataset. Move this tab  to the first tab and entitle it “XXXXX_METADATA” (ie. “Allostatic_METADATA"). Relabel the data tab as “XXXX_DATA” (ie. “Allostatic_DATA). 
 
-<img src="2. Screenshots/Picture3.png" />
+<img src="Screenshots/Picture3.png" />
 
 ### Abbreviate and capitalize categorical data
-> This helps reducing typing and potential typing mistakes in R. Once the categorical data has been abbreviated, add those abbreviations to the metadata and describe what they symbolize. 
+> This helps reduce typing and potential typing mistakes in R. Once the categorical data has been abbreviated, add those abbreviations to the metadata and describe what they symbolize. 
 
-<img src="2. Screenshots/Picture4.png" />
+<img src="Screenshots/Picture4.png" />
 
 
 ### Alphabetize (sort) the data by the categorical variable of interest 
@@ -55,43 +55,67 @@ The following steps are by no means exhaustive! Rather use this dataset as an ex
    > - 	R reads in spaces between words as periods, therefore it’s common practice to replace spaces with underscores when doing data analysis in R. 
    > - Avoid using dashes in column names or anywhere else in the dataset. 
     
-<img src="2. Screenshots/Picture5.png" />
+<img src="Screenshots/Picture5.png" />
 
 ### Remove special symbols and dashes
 > This dataset contains dashes and Greek letters, remove those dashes and replace the Greek letters with first letter of the word in English (ie. TNF-$\alpha$ becomes TNFa). 
    
 ### Bold all column names and center all data. 
-<img src="2. Screenshots/Picture6.png" />
+<img src="Screenshots/Picture6.png" />
 
 ### Create a subject identifier column
 > The subject identifer column labeled, “Subject_ID”, combines the subject number with the variable of interest (ie. Group for this dataset). 
   > - This is useful for analyses to identify outliers by the subject number and the group. 
   
-<img src="2. Screenshots/Picture7.png" />
+<img src="Screenshots/Picture7.png" />
 
-13.	Create separate files for the experimental data and demographics data (ie. sex, race, age).
-14.	The demographics dataset should be entitled “XXX_Subject_Info_061622” (ie. “Allostatic_Subject_Info_061622”). 
-    - This wasn’t done for this dataset, since it had a smaller size and the analyses were simple. 
+> Create separate files for the experimental data and demographics data (ie. sex, race, age).
+> The demographics dataset should be entitled “XXX_Subject_Info_061622” (ie. “Allostatic_Subject_Info_061622”). 
+>    - This wasn’t done for this dataset, since it had a smaller size and the analyses were simple. 
 
 ### Convert the data from a wide to long format 
 > A wide format contains values that **DO NOT** repeat the subject identifier column. For this dataset, each subject has one row containing all of its data, therefore the subject identifier occurs once in the dataset.
 
 **Wide Format**
-<img src="2. Screenshots/Picture8.png" />
+<img src="Screenshots/Picture8.png" />
 
 > A long format contains values that **DO** repeat the subject identifier column. For this dataset, that means a new column was created entitled "Variable" containing all the mediator names and a column entitled "Value" containing all their corresponding values. In the screenshot, an additional column, "Category", was added to help with the categorization of mediators in R analyses. 
 
 **Long Format**
-<img src="2. Screenshots/Picture9.png" /> 
+<img src="Screenshots/Picture9.png" /> 
 
-> The reason a long format is preferred is because it makes visualizations and statistical analyses more efficient in R. In the long format, we were able to add a column to categorize the mediators into "AL Biomarker" or "Cytokine" allowing us to more easily subset the mediators in R. 
+> The reason a long format is preferred is because it makes visualizations and statistical analyses more efficient in R. In the long format, we were able to add a column to categorize the mediators into "AL Biomarker" or "Cytokine" allowing us to more easily subset the mediators in R. Read more about wide and long formats [here](https://towardsdatascience.com/long-and-wide-formats-in-data-explained-e48d7c9a06cb).
 
 > To convert the data from a wide to long format, follow the steps below:
 
 
-*MAYBE INSERT HOW TO DO THIS WITH PIVOT TABLES??? and add how to do this in excel*
+### Pivoting data from a wide to long format
+To do this, a power query in Excel will be used. 
+Start by selecting all of the data.
+1. Click the tab at the top that says "Data". Then click "Get Data (Power Query)" at the far left. 
+2. It will ask you to choose a data source. Click "Blank table" in the bottom row. 
+4. Paste the data into the table. (Hint: Use the shortcut Ctrl + "v"). At this point, your screen should be identical to the screenshot below. 
+<img src="Screenshots/Picture10.png" />
 
+5. Click "Use first row as headers" and then click "Next" in the bottom right hand corner.
+6. Select all the columns with biomarker names. That should be the column "Cortisol" through the end.
+<img src="Screenshots/Picture11.png" />
 
-```R
+7. Click the "Transform" button in the upper left hand corner. Then click "Unpivot columns" in the middle of the pane. The final result should look like the sceenshot below. 
+<img src="Screenshots/Picture12.png" />
 
-```
+8. To save this, go back to the "Home" tab and click "Close & load". You should see something similar to the screenshot below. 
+<img src="Screenshots/Picture13.png" />
+
+9. In the upper right with all the shaded tables (within the "Table" tab), click the arrow to the left of the green table until you see one with no shading. Then click the table with no colors. 
+10. Click "Convert to Range" within the "Table" tab. This removes the power query capabilities, so that the data is a regular excel sheet. 
+11. Now the "Category" column can be created to identify the types of biomarkers in the dataset. Additionally, we can make this data more closely resemble the final long format screenshot by bolding the headers, centering all the data, etc. 
+
+## Additional Resources
+Data cleaning in Excel can be expedited with knowledge of useful features and functions to format data. Check out the resources below for additional information on Excel tricks.
+- https://careerfoundry.com/en/blog/data-analytics/data-analysis-in-excel/
+- https://www.lifehack.org/articles/technology/20-excel-spreadsheet-secrets-youll-never-know-you-dont-read-this.html
+- https://www.udemy.com/course/useful-excel-for-beginners/
+
+## Test Your Knowledge
+Try cleaning the "Module1_2_TYK Raw Dataset" to mimic the cleaned versions of the data entitled, "Module1_2_TYK Subject Info Key" and "Module1_2_TYK Data Key".
