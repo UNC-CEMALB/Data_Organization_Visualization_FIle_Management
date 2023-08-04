@@ -1,8 +1,8 @@
 # Improving Data Visualizations
 
-This training module was developed by Alexis Payton, Dr. Kyle R. Roell, and Dr. Julia E. Rager
+This training module was developed by Alexis Payton and Dr. Julia E. Rager
 
-Fall 2022
+Spring 2023
 
 ## Introduction to Training Module
 
@@ -14,27 +14,20 @@ Data visualizations are used to convey concepts and key takeaways from an analys
 
 to convey those concepts to the reader faster.
 
-In this module, ggplot2, R's data visualization will be used to walk through ways to improve data visualizations. Two example figures will be built - a simple example constructing a box plot and a more complex example constructing a XXXXX?????
+In this module, `ggplot2`, R's data visualization package will be used to walk through ways to improve data visualizations. We'll use two figures (ie. the boxplot and heat map) constructed in the previous [TAME Toolkit Module 3.3](insert link here) to be recreated, improved, and made publication-ready.
 
-The data to be used in this module was described and referenced previously in [TAME Toolkit module 1.4](https://uncsrp.github.io/Data-Analysis-Training-Modules/high-dimensional-data-visualizations.html#high-dimensional-data-visualizations). Briefly, this dataset contains environmental chemistry data resulting from the analysis of 12 smoke samples from various biomasses under two different burn conditions. The first example boxplot will be built off the one found in TAME module 1.4 and this module improvements will be made to it. The second example...
-
+The data to be used in this module was described and referenced previously in [TAME Toolkit module 3.3](insert link here). 
 
 
 ### Installing required R packages
 If you already have these packages installed, you can skip this step, or you can run the below code which checks installation status for you
 
 
-```R
-if (!requireNamespace("factoextra"))
-  install.packages("factoextra");
+```{r}
 if (!requireNamespace("MetBrewer"))
   install.packages("MetBrewer");
-if (!requireNamespace("patchwork"))
-  install.packages("patchwork");
-if (!requireNamespace("vegan"))
-  install.packages("vegan");
-if (!requireNamespace("ggrepel"))
-  install.packages("ggrepel");
+if (!requireNamespace("RColorBrewer"))
+  install.packages("RColorBrewer");
 ```
 
     Loading required namespace: factoextra
@@ -50,51 +43,17 @@ if (!requireNamespace("ggrepel"))
 ### Loading required R packages
 
 
-```R
+```{r}
 library(ggplot2)
 library(tidyverse)
-library(reshape2)
 library(MetBrewer)
-library(factoextra)
-library(patchwork)
-library(vegan)
-library(ggrepel)
+library(RColorBrewer)
 ```
-
-    ── [1mAttaching packages[22m ─────────────────────────────────────── tidyverse 1.3.1 ──
-    
-    [32m✔[39m [34mtibble [39m 3.1.6     [32m✔[39m [34mdplyr  [39m 1.0.8
-    [32m✔[39m [34mtidyr  [39m 1.2.0     [32m✔[39m [34mstringr[39m 1.4.0
-    [32m✔[39m [34mreadr  [39m 2.1.2     [32m✔[39m [34mforcats[39m 0.5.1
-    [32m✔[39m [34mpurrr  [39m 0.3.4     
-    
-    ── [1mConflicts[22m ────────────────────────────────────────── tidyverse_conflicts() ──
-    [31m✖[39m [34mdplyr[39m::[32mfilter()[39m masks [34mstats[39m::filter()
-    [31m✖[39m [34mdplyr[39m::[32mlag()[39m    masks [34mstats[39m::lag()
-    
-    
-    Attaching package: ‘reshape2’
-    
-    
-    The following object is masked from ‘package:tidyr’:
-    
-        smiths
-    
-    
-    Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
-    
-    Loading required package: permute
-    
-    Loading required package: lattice
-    
-    This is vegan 2.6-2
-    
-
 
 ### Set your working directory
 
 
-```R
+```{r}
 setwd("/filepath to where your input files are")
 ```
 
@@ -102,599 +61,255 @@ setwd("/filepath to where your input files are")
 Then let's read in our example dataset. As mentioned in the introduction, this example dataset represents chemical measurements across 12 different biomass burn scenarios, representing potential wildfire events. Let's upload and view these data:
 
 
-```R
+```{r}
 # Load the data
-SmokeData1 <- read.csv("Input/ModuleData.csv")
+smoke_data <- read.csv("Module3_4/Module3_4_DataforVisualizations.csv")
 
 # View the top of the dataset
-head(SmokeData1) 
+head(smoke_data) 
 ```
 
+Now that we've been able to view the dataset, let's come up with questions that can be answered with our boxplot and heat map figure. This will inform how we format the dataframe for visualization.
 
-<table class="dataframe">
-<caption>A data.frame: 6 × 14</caption>
-<thead>
-	<tr><th></th><th scope=col>Chemical.Category</th><th scope=col>Chemical</th><th scope=col>CASRN</th><th scope=col>EucalyptusFlaming</th><th scope=col>EucalyptusSmoldering</th><th scope=col>PeatFlaming</th><th scope=col>PeatSmoldering</th><th scope=col>PineNeedlesFlaming</th><th scope=col>PineNeedlesSmoldering</th><th scope=col>PineFlaming</th><th scope=col>PineSmoldering</th><th scope=col>RedOakFlaming</th><th scope=col>RedOakSmoldering</th><th scope=col>Units</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>n-Alkanes</td><td>2-Methylnonadecane</td><td>1560-86-7</td><td>0.06</td><td>0.06</td><td>0.06</td><td>1.36</td><td>0.06</td><td>0.06</td><td>0.06</td><td>0.06</td><td>0.13</td><td>0.06</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>2</th><td>n-Alkanes</td><td>3-Methylnonadecane</td><td>6418-45-7</td><td>0.04</td><td>0.04</td><td>0.90</td><td>1.13</td><td>0.72</td><td>0.04</td><td>0.04</td><td>0.47</td><td>0.77</td><td>0.04</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>3</th><td>n-Alkanes</td><td>Docosane          </td><td>629-97-0 </td><td>0.25</td><td>0.21</td><td>0.57</td><td>9.46</td><td>0.18</td><td>0.32</td><td>0.48</td><td>0.16</td><td>0.36</td><td>0.16</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>4</th><td>n-Alkanes</td><td>Dodecylcyclohexane</td><td>1795-17-1</td><td>0.04</td><td>0.04</td><td>0.04</td><td>0.25</td><td>0.04</td><td>0.12</td><td>0.04</td><td>0.04</td><td>0.04</td><td>0.04</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>5</th><td>n-Alkanes</td><td>Eicosane          </td><td>112-95-8 </td><td>0.25</td><td>0.11</td><td>0.54</td><td>7.55</td><td>0.16</td><td>0.28</td><td>0.29</td><td>0.17</td><td>0.38</td><td>0.15</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>6</th><td>n-Alkanes</td><td>Heneicosane       </td><td>629-94-7 </td><td>0.28</td><td>0.13</td><td>0.34</td><td>6.77</td><td>0.13</td><td>0.30</td><td>0.42</td><td>0.13</td><td>0.69</td><td>0.13</td><td>ng_per_uL</td></tr>
-</tbody>
-</table>
-
-
-
-Now that we've been able to view the dataset, let's come up with a question that can be answered with our boxplot figure. This will inform how we format the dataframe for visualization.
-
-## Traning Module's Environmental Health Questions 
+## Training Module's Environmental Health Questions 
 This training module was specifically developed to answer the following environmental health questions:
-1. Which biomass burn condition has the greatest chemical concentration?
-2. ?
+1. Boxplot: Which biomass burn condition has the highest chemical concentration?
+2. Heat Map: Under which biomass burn conditions, are concentrations of certain chemical categories the highest?
 
 ### Formatting dataframes for downstream visualization code
-For some of the visualizations below (e.g., heat maps) we’ll use data from the original full dataframe. The only formatting that needs to be done to this dataframe is to move the chemical names to the row names position of the dataframe:
+First formatting the dataframe by changing it from a wide to long format and normalizing the chemical concentration data. For more details on this data reshaping visit [TAME Toolkit module 3.3](insert link here). 
 
 
-```R
-# Converting the chemical category column to row names
-SmokeData2 = SmokeData1 %>%
-    column_to_rownames(var = "Chemical")
+```{r}
+scaled_longer_smoke_data = pivot_longer(smoke_data, cols = 4:13, names_to = "Biomass_Burn_Condition", 
+                                 values_to = "Chemical_Concentration") %>%
+    # scaling within each chemical
+    group_by(Chemical) %>%
+    mutate(Scaled_Chemical_Concentration = scale(Chemical_Concentration)) %>%
+    ungroup()
 
-# View the top of the reorganized dataset
-head(SmokeData2)
+head(scaled_longer_smoke_data)
 ```
+### Original Boxplot Version from TAME Module 3.3
 
 
-<table class="dataframe">
-<caption>A data.frame: 6 × 13</caption>
-<thead>
-	<tr><th></th><th scope=col>Chemical.Category</th><th scope=col>CASRN</th><th scope=col>EucalyptusFlaming</th><th scope=col>EucalyptusSmoldering</th><th scope=col>PeatFlaming</th><th scope=col>PeatSmoldering</th><th scope=col>PineNeedlesFlaming</th><th scope=col>PineNeedlesSmoldering</th><th scope=col>PineFlaming</th><th scope=col>PineSmoldering</th><th scope=col>RedOakFlaming</th><th scope=col>RedOakSmoldering</th><th scope=col>Units</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>2-Methylnonadecane</th><td>n-Alkanes</td><td>1560-86-7</td><td>0.06</td><td>0.06</td><td>0.06</td><td>1.36</td><td>0.06</td><td>0.06</td><td>0.06</td><td>0.06</td><td>0.13</td><td>0.06</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>3-Methylnonadecane</th><td>n-Alkanes</td><td>6418-45-7</td><td>0.04</td><td>0.04</td><td>0.90</td><td>1.13</td><td>0.72</td><td>0.04</td><td>0.04</td><td>0.47</td><td>0.77</td><td>0.04</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>Docosane</th><td>n-Alkanes</td><td>629-97-0 </td><td>0.25</td><td>0.21</td><td>0.57</td><td>9.46</td><td>0.18</td><td>0.32</td><td>0.48</td><td>0.16</td><td>0.36</td><td>0.16</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>Dodecylcyclohexane</th><td>n-Alkanes</td><td>1795-17-1</td><td>0.04</td><td>0.04</td><td>0.04</td><td>0.25</td><td>0.04</td><td>0.12</td><td>0.04</td><td>0.04</td><td>0.04</td><td>0.04</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>Eicosane</th><td>n-Alkanes</td><td>112-95-8 </td><td>0.25</td><td>0.11</td><td>0.54</td><td>7.55</td><td>0.16</td><td>0.28</td><td>0.29</td><td>0.17</td><td>0.38</td><td>0.15</td><td>ng_per_uL</td></tr>
-	<tr><th scope=row>Heneicosane</th><td>n-Alkanes</td><td>629-94-7 </td><td>0.28</td><td>0.13</td><td>0.34</td><td>6.77</td><td>0.13</td><td>0.30</td><td>0.42</td><td>0.13</td><td>0.69</td><td>0.13</td><td>ng_per_uL</td></tr>
-</tbody>
-</table>
-
-
-
-
-```R
-# Creating a smaller dataframe to work with 
-SmokeData3 = SmokeData2[,3:12]
-
-# Viewing the dataframe
-head(SmokeData3)
-
-# scaling the data
-ScaledData = t(scale(t(SmokeData3)))
-head(ScaledData)
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 6 × 10</caption>
-<thead>
-	<tr><th></th><th scope=col>EucalyptusFlaming</th><th scope=col>EucalyptusSmoldering</th><th scope=col>PeatFlaming</th><th scope=col>PeatSmoldering</th><th scope=col>PineNeedlesFlaming</th><th scope=col>PineNeedlesSmoldering</th><th scope=col>PineFlaming</th><th scope=col>PineSmoldering</th><th scope=col>RedOakFlaming</th><th scope=col>RedOakSmoldering</th></tr>
-	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>2-Methylnonadecane</th><td>0.06</td><td>0.06</td><td>0.06</td><td>1.36</td><td>0.06</td><td>0.06</td><td>0.06</td><td>0.06</td><td>0.13</td><td>0.06</td></tr>
-	<tr><th scope=row>3-Methylnonadecane</th><td>0.04</td><td>0.04</td><td>0.90</td><td>1.13</td><td>0.72</td><td>0.04</td><td>0.04</td><td>0.47</td><td>0.77</td><td>0.04</td></tr>
-	<tr><th scope=row>Docosane</th><td>0.25</td><td>0.21</td><td>0.57</td><td>9.46</td><td>0.18</td><td>0.32</td><td>0.48</td><td>0.16</td><td>0.36</td><td>0.16</td></tr>
-	<tr><th scope=row>Dodecylcyclohexane</th><td>0.04</td><td>0.04</td><td>0.04</td><td>0.25</td><td>0.04</td><td>0.12</td><td>0.04</td><td>0.04</td><td>0.04</td><td>0.04</td></tr>
-	<tr><th scope=row>Eicosane</th><td>0.25</td><td>0.11</td><td>0.54</td><td>7.55</td><td>0.16</td><td>0.28</td><td>0.29</td><td>0.17</td><td>0.38</td><td>0.15</td></tr>
-	<tr><th scope=row>Heneicosane</th><td>0.28</td><td>0.13</td><td>0.34</td><td>6.77</td><td>0.13</td><td>0.30</td><td>0.42</td><td>0.13</td><td>0.69</td><td>0.13</td></tr>
-</tbody>
-</table>
-
-
-
-
-<table class="dataframe">
-<caption>A matrix: 6 × 10 of type dbl</caption>
-<thead>
-	<tr><th></th><th scope=col>EucalyptusFlaming</th><th scope=col>EucalyptusSmoldering</th><th scope=col>PeatFlaming</th><th scope=col>PeatSmoldering</th><th scope=col>PineNeedlesFlaming</th><th scope=col>PineNeedlesSmoldering</th><th scope=col>PineFlaming</th><th scope=col>PineSmoldering</th><th scope=col>RedOakFlaming</th><th scope=col>RedOakSmoldering</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>2-Methylnonadecane</th><td>-0.3347765</td><td>-0.3347765</td><td>-0.3347765</td><td>2.841935</td><td>-0.3347765</td><td>-0.3347765</td><td>-0.3347765</td><td>-0.3347765</td><td>-0.1637228</td><td>-0.3347765</td></tr>
-	<tr><th scope=row>3-Methylnonadecane</th><td>-0.8794448</td><td>-0.8794448</td><td> 1.1161291</td><td>1.649829</td><td> 0.6984509</td><td>-0.8794448</td><td>-0.8794448</td><td> 0.1183422</td><td> 0.8144726</td><td>-0.8794448</td></tr>
-	<tr><th scope=row>Docosane</th><td>-0.3327216</td><td>-0.3465132</td><td>-0.2223890</td><td>2.842787</td><td>-0.3568568</td><td>-0.3085863</td><td>-0.2534201</td><td>-0.3637526</td><td>-0.2947948</td><td>-0.3637526</td></tr>
-	<tr><th scope=row>Dodecylcyclohexane</th><td>-0.4240624</td><td>-0.4240624</td><td>-0.4240624</td><td>2.646734</td><td>-0.4240624</td><td> 0.7457649</td><td>-0.4240624</td><td>-0.4240624</td><td>-0.4240624</td><td>-0.4240624</td></tr>
-	<tr><th scope=row>Eicosane</th><td>-0.3195928</td><td>-0.3802202</td><td>-0.1940076</td><td>2.841691</td><td>-0.3585675</td><td>-0.3066012</td><td>-0.3022707</td><td>-0.3542370</td><td>-0.2632960</td><td>-0.3628981</td></tr>
-	<tr><th scope=row>Heneicosane</th><td>-0.3166775</td><td>-0.3895328</td><td>-0.2875354</td><td>2.835527</td><td>-0.3895328</td><td>-0.3069635</td><td>-0.2486793</td><td>-0.3895328</td><td>-0.1175398</td><td>-0.3895328</td></tr>
-</tbody>
-</table>
-
-
-
-
-```R
-# Melting the data, which converts the data into a longer format 
-ScaledData.melt <- melt(ScaledData)
-
-# Updating the column names
-colnames(ScaledData.melt) <- c("Chemical", "Biomass_Burn_Condition", 
-                               "Scaled_Chemical_Concentration") 
-head(ScaledData.melt)
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 6 × 3</caption>
-<thead>
-	<tr><th></th><th scope=col>Chemical</th><th scope=col>Biomass_Burn_Condition</th><th scope=col>Scaled_Chemical_Concentration</th></tr>
-	<tr><th></th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>2-Methylnonadecane</td><td>EucalyptusFlaming</td><td>-0.3347765</td></tr>
-	<tr><th scope=row>2</th><td>3-Methylnonadecane</td><td>EucalyptusFlaming</td><td>-0.8794448</td></tr>
-	<tr><th scope=row>3</th><td>Docosane          </td><td>EucalyptusFlaming</td><td>-0.3327216</td></tr>
-	<tr><th scope=row>4</th><td>Dodecylcyclohexane</td><td>EucalyptusFlaming</td><td>-0.4240624</td></tr>
-	<tr><th scope=row>5</th><td>Eicosane          </td><td>EucalyptusFlaming</td><td>-0.3195928</td></tr>
-	<tr><th scope=row>6</th><td>Heneicosane       </td><td>EucalyptusFlaming</td><td>-0.3166775</td></tr>
-</tbody>
-</table>
-
-
-
-### Original Version from TAME Module 1.4
-
-
-```R
+```{r}
 options(repr.plot.width=8, repr.plot.height=7) #changing size
-ggplot(data = ScaledData.melt, aes(x = Scaled_Chemical_Concentration, color = Biomass_Burn_Condition)) + 
+ggplot(data = scaled_longer_smoke_data, aes(x = Scaled_Chemical_Concentration, color = Biomass_Burn_Condition)) + 
   geom_boxplot()
 ```
 
-
-    
-![png](output_13_0.png)
-    
-
-
 ### There are three main aspects we can adjust on this figure:
- **1. The order of the box plots.**
- 
-   Ordering the biomass burn conditions from highest to lowest based on their median scaled chemical concentration allows the reader to easily determine the biomass burn condition that had the greatest or least chemical concentrations relative to each other. In R, this can be done by putting the biomass_burn_condition variable into a factor.
-      
-**2. The legibility of the text in the legend and axes.**
+**1. The legibility of the text in the legend and axes.**
 
    Creating spaces between the text or exchanging the underscores for spaces improves the legibility of the figure. 
+   
+   
+ **2. The order of the boxplots.**
+ 
+   Ordering the biomass burn conditions from highest to lowest based on their median scaled chemical concentration allows the reader to easily determine the biomass burn condition that had the greatest or least chemical concentrations relative to each other. In R, this can be done by putting the `Biomass_Burn_Condition` variable into a factor.
+     
      
 **3. Use of color.**
 
-   In figures variables can be visualized using color, text, size, etc. In this figure, it is redundant to have the biomass burn condition encoded in the legend and the color. Instead this variable can be put on the y axis and the legend will be removed to be more concise. The shades of the colors will also be changed, but to keep each burn condition distinct colors will be chosen that are distinct from one another. 
+   In figures variables can be visualized using color, text, size, etc. In this figure, it is redundant to have the biomass burn condition encoded in the legend and the color. Instead this variable can be put on the y axis and the legend will be removed to be more concise. The shades of the colors will also be changed, but to keep each burn condition distinct from each other, colors will be chosen that are distinct from one another. `MetBrewer` and `RColorBrewer` are packages that offer great color schemes. 
+   
+For more information on `MetBrewer` see its associated [RDocumentation](https://cran.r-project.org/web/packages/MetBrewer/index.html) and [example tutorial](https://github.com/BlakeRMills/MetBrewer). For more information on `RColorBrewer` see its associated [RDocumentation](https://cran.r-project.org/web/packages/RColorBrewer/index.html) and [example tutorial](https://r-graph-gallery.com/38-rcolorbrewers-palettes.html).
+
+Let's start with addressing the **#1: Legibility of Axis Text**. The legend title and axis titles can easily be changed with `ggplot`, so that will be done later. 
 
 
-```R
+```{r}
 # First adding spaces beteween the biomass burn conditions
-ScaledData.melt.spaces = ScaledData.melt %>%
-    mutate(Biomass_Burn_Condition = ifelse(Biomass_Burn_Condition =="RedOakSmoldering", "Red Oak Smoldering",
-                ifelse(Biomass_Burn_Condition =="RedOakFlaming", "Red Oak Flaming",
-                    ifelse(Biomass_Burn_Condition =="EucalyptusSmoldering", "Eucalyptus Smoldering",
-                        ifelse(Biomass_Burn_Condition =="EucalyptusFlaming", "Eucalyptus Flaming",
-                            ifelse(Biomass_Burn_Condition =="PineSmoldering", "Pine Smoldering",
-                                ifelse(Biomass_Burn_Condition =="PineFlaming", "Pine Flaming",
-                                    ifelse(Biomass_Burn_Condition =="PineNeedlesSmoldering", "Pine Needles Smoldering",
-                                        ifelse(Biomass_Burn_Condition =="PineNeedlesFlaming", "Pine Needles Flaming",
-                                            ifelse(Biomass_Burn_Condition =="PeatSmoldering", "Peat Smoldering",
-                                                  ifelse(Biomass_Burn_Condition =="PeatFlaming", "Peat Flaming",
+scaled_longer_smoke_data = scaled_longer_smoke_data %>%
+    mutate(Biomass_Burn_Condition = ifelse(Biomass_Burn_Condition == "Red_Oak_Smoldering", "Red Oak Smoldering",
+                ifelse(Biomass_Burn_Condition == "Red_Oak_Flaming", "Red Oak Flaming",
+                    ifelse(Biomass_Burn_Condition == "Eucalyptus_Smoldering", "Eucalyptus Smoldering",
+                        ifelse(Biomass_Burn_Condition == "Eucalyptus_Flaming", "Eucalyptus Flaming",
+                            ifelse(Biomass_Burn_Condition == "Pine_Smoldering", "Pine Smoldering",
+                                ifelse(Biomass_Burn_Condition == "Pine_Flaming", "Pine Flaming",
+                                    ifelse(Biomass_Burn_Condition == "Pine_Needles_Smoldering", "Pine Needles Smoldering",
+                                        ifelse(Biomass_Burn_Condition == "Pine_Needles_Flaming", "Pine Needles Flaming",
+                                            ifelse(Biomass_Burn_Condition == "Peat_Smoldering", "Peat Smoldering",
+                                                  ifelse(Biomass_Burn_Condition == "Peat_Flaming", "Peat Flaming",
                                                          NA)))))))))))
 # Viewing dataframe
-head(ScaledData.melt.spaces)
+head(scaled_longer_smoke_data)
 ```
 
 
-<table class="dataframe">
-<caption>A data.frame: 6 × 3</caption>
-<thead>
-	<tr><th></th><th scope=col>Chemical</th><th scope=col>Biomass_Burn_Condition</th><th scope=col>Scaled_Chemical_Concentration</th></tr>
-	<tr><th></th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>2-Methylnonadecane</td><td>Eucalyptus Flaming</td><td>-0.3347765</td></tr>
-	<tr><th scope=row>2</th><td>3-Methylnonadecane</td><td>Eucalyptus Flaming</td><td>-0.8794448</td></tr>
-	<tr><th scope=row>3</th><td>Docosane          </td><td>Eucalyptus Flaming</td><td>-0.3327216</td></tr>
-	<tr><th scope=row>4</th><td>Dodecylcyclohexane</td><td>Eucalyptus Flaming</td><td>-0.4240624</td></tr>
-	<tr><th scope=row>5</th><td>Eicosane          </td><td>Eucalyptus Flaming</td><td>-0.3195928</td></tr>
-	<tr><th scope=row>6</th><td>Heneicosane       </td><td>Eucalyptus Flaming</td><td>-0.3166775</td></tr>
-</tbody>
-</table>
+**2. Reordering the boxplots based on the median scaled chemical concentration**.
+
+After calculating the median scaled chemical concentration for each biomass burn condition, the new dataframe will be arranged from lowest to highest median scaled concentration from the top of the dataframe to the bottom. This order will be saved in a vector, `median_biomass_order`. Although the biomass burn conditions are saved from lowest to highest concentration, `ggplot` will plot them in reverse order with the highest concentration at the top and the lowest on bottom of the y axis.
 
 
-
-
-```R
-# Factor the biomass_burn_condition by the median scaled_chemical_concentration
-median_concentration_data = ScaledData.melt.spaces %>%
+```{r}
+median_biomass = scaled_longer_smoke_data %>%
     group_by(Biomass_Burn_Condition) %>%
     summarize(Median_Concentration = median(Scaled_Chemical_Concentration)) %>%
+    # arranges dataframe from lowest to highest from top to bottom
     arrange(Median_Concentration)
 
-head(median_concentration_data)
+head(median_biomass)
 
 # Saving that order
-median_biomass_order = median_concentration_data$Biomass_Burn_Condition
+median_biomass_order = median_biomass$Biomass_Burn_Condition
 ```
 
 
-<table class="dataframe">
-<caption>A tibble: 6 × 2</caption>
-<thead>
-	<tr><th scope=col>Biomass_Burn_Condition</th><th scope=col>Median_Concentration</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><td>Red Oak Smoldering     </td><td>-0.4590961</td></tr>
-	<tr><td>Eucalyptus Smoldering  </td><td>-0.4508589</td></tr>
-	<tr><td>Pine Smoldering        </td><td>-0.4244289</td></tr>
-	<tr><td>Pine Needles Smoldering</td><td>-0.3702707</td></tr>
-	<tr><td>Pine Needles Flaming   </td><td>-0.3498902</td></tr>
-	<tr><td>Red Oak Flaming        </td><td>-0.3373308</td></tr>
-</tbody>
-</table>
+```{r}
+# Putting into factor to organize the burn conditions
+scaled_longer_smoke_data$Biomass_Burn_Condition = factor(scaled_longer_smoke_data$Biomass_Burn_Condition, 
+                                                                levels = median_biomass_order)
+
+# Final dataframe to be used for plotting
+head(scaled_longer_smoke_data)
+```
 
 
+Now that the dataframe has been finalized, we can plot the new boxplot. The final revision, **#3: Making Use of Color**, will be addressed with `ggplot`. However, a palette can be chosen from the `MetBrewer` package.
+
+
+```{r}
+# Choosing the "Jurarez" palette from the `MetBrewer` package
+# `n = 12`, since there are 12 biomass burn conditions
+juarez_colors = met.brewer(name = "Juarez", n = 12)[1:12]
+```
 
 ### Improved Version
 
 
-```R
-options(repr.plot.width=7, repr.plot.height=7) #changing size
+```{r}
+options(repr.plot.width=7, repr.plot.height=7) # changing dimensions of the entire figure
 
-# Putting into factor to organize the burn conditions
-ScaledData.melt.spaces$Biomass_Burn_Condition = factor(ScaledData.melt.spaces$Biomass_Burn_Condition, levels = median_biomass_order)
-
-# Choosing palette from package
-metbrewer_colors = met.brewer(name = "Juarez", n = 12)[1:12]
-
-ggplot(data = ScaledData.melt.spaces, aes(x = Scaled_Chemical_Concentration, y = Biomass_Burn_Condition, 
+ggplot(scaled_longer_smoke_data, aes(x = Scaled_Chemical_Concentration, y = Biomass_Burn_Condition, 
                                    color = Biomass_Burn_Condition)) + 
   geom_boxplot() +
-  geom_point(position = position_jitter(h = 0.1)) + # jittering the points, so they're not all on top of each other
+  # jittering the points, so they're not all on top of each other and adding transparency
+  geom_point(position = position_jitter(h = 0.1), alpha = 0.7) + 
 
   theme_light() + # changing the theme
-  theme(axis.text = element_text(size = 12), # changing size of x axis labels
+  theme(axis.text = element_text(size = 12), # changing size of axis labels
       axis.title = element_text(face = "bold", size = rel(1.7)), # changes axis titles
-      legend.position = "none") + # changes legend text
+      legend.position = "none") + # removes legend
 
   xlab('Scaled Chemical Concentration (pg/uL)') + ylab('Biomass Burn Condition') + # changing axis labels 
-  scale_color_manual(values = c(metbrewer_colors))
+  scale_color_manual(values = c(juarez_colors)) # changing the colors
 ```
 
 
-    
-![png](output_18_0.png)
-    
+Here are some interesting takeaways from viewing this boxplot:
+- Smoldering peat has the highest chemical concentration (based on the median), however there the median concentrations are comparable across all biomass burn conditions
+- All the flaming conditions have the highest chemical concentrations with the exception of smoldering peat
+- Flaming conditions tend to have more variation in the chemical concentrations than the smoldering conditions with the exception of smoldering peat
+
+You may notice that the scaled chemical concentration was put on the x axis and burn condition was put on the y axis and not vice versa. When names are longer in length, the names are more legible if that variable is placed on the y axis.
+
+Other aspects of the figure were changed in the latest version, but those are minor compared to changing the order of the boxplots, revamping the text, and the usage of color. Posit provides a [GGplot2 cheat sheet](https://posit.co/resources/cheatsheets/?type=posit-cheatsheets&_page=2/) for changing a figure's parameters. 
+
+We'll use a heat map to answer the second environmental health question: **Under which biomass burn conditions, are concentrations of certain chemical categories the highest?** Let's view what the original heat map looked like and find aspects of it that can be improved.
+
+### Original Heat Map Version from TAME Module 3.3
 
 
-You may notice that the scaled chemical concentration was put on the x axis and burn condition was put on the y axis and not vice versa. When names are longer the names are more legible if that variable is placed on the y axis.
+```{r}
+# Changing the biomass condition variable back to a character from a factor
+scaled_longer_smoke_data$Biomass_Burn_Condition = as.character(scaled_longer_smoke_data$Biomass_Burn_Condition)
 
-Other aspects of the figure were changed in the latest version, but those are minor compared to changing the order of the boxplots, revamping the text, and the usage of color. RStudio provides a [ggplot2 cheat sheet](https://www.rstudio.com/resources/cheatsheets/) for changing a figure's parameters. 
+options(repr.plot.width = 10, repr.plot.height = 7)
+ggplot(data = scaled_longer_smoke_data, aes(x = Chemical.Category, y = Biomass_Burn_Condition,
+                                           fill = Scaled_Chemical_Concentration)) + 
+  geom_tile()
+```
 
-# Question #2: 
+### There are three main aspects we can adjust on this figure:
+**1. The legibility of the text in the legend and axes.**
 
-### Importing example dataset
-This dataset contains...
+   Similiar to what we did previously, we'll replace underscores and periods with spaces in the axis labels and titles. 
+   
+   
+**2. The order of the axis labels.**
+ 
+   Ordering the biomass burn condition and chemical category from highest to lowest based on their median scaled chemical concentration allows the reader to easily determine the biomass burn condition that had the greatest or least chemical concentrations relative to each other. From the previous boxplot figure, biomass burn condition is already in this order, however we need to order the chemical category by putting the variable into a factor. 
+      
+     
+**3. Use of color.**
+
+   Notice that in the boxplot we used a qualitative palette, which is best for creating visual differences between classes. In this heat map, we'll choose a diverging color palette that uses two more contrasting colors. A diverging color palette is able to highlight mid range with a lighter color and values at either extreme with a darker color.
+
+Let's start with **#1: Legibility of Text** can be addressed in `ggplot`, so **#2: Reordering the heat map**.
+
+`Biomass_Burn_Condition` has already been reordered and put into a factor, but we need to do the same with `Chemical.Category`. Similiar to before, median scaled chemical concentration for each chemical category will be calculated. However, this time the new dataframe will be arranged from highest to lowest median scaled concentration from the top of the dataframe to the bottom. `ggplot` will plot them in the SAME order with the highest concentration on the left side and the lowest on the right side of the figure.
 
 
-```R
-library(readxl)
+```{r}
+# Order the chemical category by the median scaled chemical concentration
+median_chemical = scaled_longer_smoke_data %>%
+    group_by(Chemical.Category) %>%
+    summarize(Median_Concentration = median(Scaled_Chemical_Concentration)) %>%
+    arrange(-Median_Concentration)
 
-cytokine_data = data.frame(read_excel("Input/CytokineData_102920.xlsx", sheet = 2))
+head(median_chemical)
 
-# View the top of the dataset
-head(cytokine_data)
+# Saving that order
+median_chemical_order = median_chemical$Chemical.Category
 ```
 
 
-<table class="dataframe">
-<caption>A data.frame: 6 × 8</caption>
-<thead>
-	<tr><th></th><th scope=col>Original_Identifier</th><th scope=col>Protein</th><th scope=col>Conc</th><th scope=col>Conc_pslog2</th><th scope=col>Compartment</th><th scope=col>SubjectNo</th><th scope=col>Group</th><th scope=col>SubjectID</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>E_C_F_002</td><td>IFNg   </td><td> 17.642316</td><td>4.220509</td><td>NELF</td><td>1</td><td>NS</td><td>NS_1</td></tr>
-	<tr><th scope=row>2</th><td>E_C_F_002</td><td>IL10   </td><td>  2.873724</td><td>1.953721</td><td>NELF</td><td>1</td><td>NS</td><td>NS_1</td></tr>
-	<tr><th scope=row>3</th><td>E_C_F_002</td><td>IL12p70</td><td>  1.625272</td><td>1.392467</td><td>NELF</td><td>1</td><td>NS</td><td>NS_1</td></tr>
-	<tr><th scope=row>4</th><td>E_C_F_002</td><td>IL13   </td><td> 36.117692</td><td>5.214035</td><td>NELF</td><td>1</td><td>NS</td><td>NS_1</td></tr>
-	<tr><th scope=row>5</th><td>E_C_F_002</td><td>IL1b   </td><td>104.409217</td><td>6.719857</td><td>NELF</td><td>1</td><td>NS</td><td>NS_1</td></tr>
-	<tr><th scope=row>6</th><td>E_C_F_002</td><td>IL6    </td><td> 21.159536</td><td>4.469856</td><td>NELF</td><td>1</td><td>NS</td><td>NS_1</td></tr>
-</tbody>
-</table>
+```{r}
+# Putting into factor to organize the chemical categories
+scaled_longer_smoke_data$Chemical.Category = factor(scaled_longer_smoke_data$Chemical.Category, 
+                                                                levels = median_chemical_order)
 
+# Putting burn conditons back into a factor to organize them
+scaled_longer_smoke_data$Biomass_Burn_Condition = factor(scaled_longer_smoke_data$Biomass_Burn_Condition, 
+                                                                levels = median_biomass_order)
 
-
-### Formatting dataframe for downstream visualization code
-
-
-```R
-# Splitting the dataframe within each category to perform PCA on each compartment separately
-split_cytokine_data = cytokine_data %>%
-    group_by(Compartment) %>%
-    group_split()
-
-NLF_data = split_cytokine_data[[2]] # NLF
-NELF_data = split_cytokine_data[[1]] # NELF
-sputum_data = split_cytokine_data[[4]] # sputum
-serum_data = split_cytokine_data[[3]] # serum
-
-# Reshaping the data putting subject ids as the rows and the protein as the columns
-pca_prep_NLF_data <- reshape2::dcast(NLF_data, SubjectID ~ Protein, value.var ="Conc_pslog2") %>% 
-  column_to_rownames("SubjectID") 
-pca_prep_NELF_data <- reshape2::dcast(NELF_data, SubjectID ~ Protein, value.var ="Conc_pslog2") %>% 
-  column_to_rownames("SubjectID") 
-pca_prep_sputum_data <- reshape2::dcast(sputum_data, SubjectID ~ Protein, value.var ="Conc_pslog2") %>% 
-  column_to_rownames("SubjectID") 
-pca_prep_serum_data <- reshape2::dcast(serum_data, SubjectID ~ Protein, value.var ="Conc_pslog2") %>% 
-  column_to_rownames("SubjectID") 
-
-# Background filter eliminating any cytokines that are not expressed in a compartment  
-pca_prep_NLF_data$I309 <- NULL
-pca_prep_sputum_data$I309 <- NULL
-
-# Viewing data
-head(pca_prep_NLF_data)
+# Final dataframe to be used for plotting
+head(scaled_longer_smoke_data)
 ```
 
 
-<table class="dataframe">
-<caption>A data.frame: 6 × 21</caption>
-<thead>
-	<tr><th></th><th scope=col>Eotaxin</th><th scope=col>Eotaxin3</th><th scope=col>Fractalkine</th><th scope=col>IFNg</th><th scope=col>IL10</th><th scope=col>IL12p70</th><th scope=col>IL13</th><th scope=col>IL17B</th><th scope=col>IL17D</th><th scope=col>IL1b</th><th scope=col>⋯</th><th scope=col>IL6</th><th scope=col>IL8</th><th scope=col>IP10</th><th scope=col>ITAC</th><th scope=col>MCP1</th><th scope=col>MIG</th><th scope=col>MIP1a</th><th scope=col>MIP1b</th><th scope=col>TARC</th><th scope=col>TNFa</th></tr>
-	<tr><th></th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>⋯</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>CS_15</th><td>0.000000</td><td>3.038643</td><td> 9.636227</td><td>0.000000</td><td>0.14893463</td><td>0.07469627</td><td>2.207063</td><td>0.6256351</td><td>1.8301329</td><td>1.107784</td><td>⋯</td><td>0.3908391</td><td> 9.086325</td><td> 7.061425</td><td>3.498878</td><td>5.441440</td><td> 8.537734</td><td>2.221396</td><td>1.707346</td><td>0.000000</td><td>0.51280805</td></tr>
-	<tr><th scope=row>CS_16</th><td>6.163727</td><td>3.613655</td><td>10.187516</td><td>1.950766</td><td>1.27894590</td><td>0.65261981</td><td>4.469849</td><td>2.3134686</td><td>2.9811763</td><td>5.618246</td><td>⋯</td><td>3.5291829</td><td>10.849439</td><td>10.185456</td><td>5.843138</td><td>6.378714</td><td> 9.624979</td><td>3.399035</td><td>4.104372</td><td>1.948876</td><td>2.85911002</td></tr>
-	<tr><th scope=row>CS_17</th><td>3.713489</td><td>3.700294</td><td>11.048498</td><td>0.000000</td><td>0.13293875</td><td>0.92715290</td><td>3.367642</td><td>3.1315019</td><td>1.1597726</td><td>3.036496</td><td>⋯</td><td>4.1125851</td><td>11.153075</td><td> 9.734703</td><td>2.169828</td><td>6.349178</td><td> 6.100281</td><td>1.974294</td><td>3.042272</td><td>1.993956</td><td>1.34720761</td></tr>
-	<tr><th scope=row>CS_18</th><td>5.192319</td><td>3.725884</td><td>10.853572</td><td>2.046930</td><td>0.08873065</td><td>0.00000000</td><td>1.354363</td><td>3.4258250</td><td>0.7740756</td><td>2.584225</td><td>⋯</td><td>1.0910076</td><td> 9.780520</td><td>13.189708</td><td>4.766194</td><td>5.381405</td><td> 9.516039</td><td>2.634565</td><td>2.549122</td><td>2.683546</td><td>0.08963907</td></tr>
-	<tr><th scope=row>CS_19</th><td>7.690446</td><td>3.313601</td><td>11.180747</td><td>3.456155</td><td>1.61110773</td><td>1.25875198</td><td>4.999383</td><td>2.9672221</td><td>3.5146895</td><td>5.591556</td><td>⋯</td><td>6.2319868</td><td>10.870907</td><td>11.405130</td><td>7.329651</td><td>6.657583</td><td>11.704121</td><td>4.280921</td><td>5.847280</td><td>3.680552</td><td>3.59674526</td></tr>
-	<tr><th scope=row>CS_20</th><td>5.649213</td><td>4.553713</td><td>12.542214</td><td>0.000000</td><td>0.10019654</td><td>0.71096657</td><td>2.103436</td><td>3.5997751</td><td>0.9149816</td><td>2.221075</td><td>⋯</td><td>2.6196326</td><td>10.280923</td><td> 9.715958</td><td>2.024822</td><td>7.051569</td><td> 6.106692</td><td>4.160397</td><td>3.876557</td><td>3.765043</td><td>0.78475311</td></tr>
-</tbody>
-</table>
+Now that the dataframe has been finalized, we can plot the new boxplot. The final revision, **#3: Making Use of Color**, will be addressed with `ggplot`. However, a palette can be chosen from the `RColorBrewer` package.
 
 
+```{r}
+# Only needed to choose 2 colors for 'low' and 'high' in the heat map
+# `n = 3` in the code, since that was the minimum number that could be chosen
+rcolorbrewer_colors = brewer.pal(n = 3, name = 'Dark2')
+```
 
-### Performing PCA
-
-
-```R
-pca_NLF = prcomp(pca_prep_NLF_data, scale = TRUE, center = TRUE)
-pca_NELF = prcomp(pca_prep_NELF_data, scale = TRUE, center = TRUE)
-pca_sputum = prcomp(pca_prep_sputum_data, scale = TRUE, center = TRUE)
-pca_serum = prcomp(pca_prep_serum_data, scale = TRUE, center = TRUE)
-
-# Viewing scree plots to see how much of the variance was captured in first 2 eigenvectors
-options(repr.plot.width=15, repr.plot.height=8) #changing size
-
-pca_plot_NLF = fviz_eig(pca_NLF, addlabels = TRUE, center = TRUE) + ggtitle("NLF")
-pca_plot_NELF = fviz_eig(pca_NELF, addlabels = TRUE, center = TRUE) + ggtitle("NELF")
-pca_plot_sputum = fviz_eig(pca_sputum, addlabels = TRUE, center = TRUE) + ggtitle("Sputum")
-pca_plot_serum = fviz_eig(pca_serum, addlabels = TRUE, center = TRUE) + ggtitle("Serum")
+## Improved Heat Map
 
 
-# Using the patchwork function to view all the plots together
-pca_plot_NLF + pca_plot_NELF + pca_plot_sputum + pca_plot_serum
+```{r}
+options(repr.plot.width = 12, repr.plot.height = 4)
+ggplot(data = scaled_longer_smoke_data, aes(x = Chemical.Category, y = Biomass_Burn_Condition,
+                                           fill = Scaled_Chemical_Concentration)) + 
+  geom_tile(color = 'white') + # adds white space between the tiles
+
+  theme_minimal() + # changing the theme
+  theme(axis.text = element_text(size = 12), # changing size of axis labels
+      axis.title = element_text(face = "bold", size = rel(1.7)), # changes axis titles
+      legend.title = element_text(face = 'bold', size = 14), # changes legend title
+      legend.text = element_text(size = 10)) + # changes legend text
+
+  labs(x = 'Chemical Category', y = 'Biomass Burn Condition', 
+       fill = "Scaled Chemical\nConcentration (pg/mL)") + # changing axis labels 
+  scale_fill_gradient(low = rcolorbrewer_colors[1], high = rcolorbrewer_colors[2]) # changing the colors
 ```
 
 
-    
-![png](output_24_0.png)
-    
-
-
-### Extracting eigenvector values
-
-
-```R
-get_scores = function(pca_dataframe, original_dataframe, compartment_name){
-    # Creating a function to obtain the PCA eigenvector values or scores
-    compartment_scores = data.frame(scores(pca_dataframe))
-    
-    # Converting the row names (subject ids) into a column
-    compartment_scores = compartment_scores %>%
-        rownames_to_column(var = "SubjectID")
-    
-    # Adding in a column that species the group and cytokine concentration
-    compartment_scores = inner_join(original_dataframe %>%
-                         select(c("SubjectID", "Group", "Conc_pslog2")), compartment_scores)
-    
-    # Adding a column that specifies the compartment
-    compartment_scores$Compartment = rep(compartment_name, times = length(compartment_scores$PC1))
-    
-    return(compartment_scores)
-}
-
-# Calling function
-NLF_scores <- get_scores(pca_NLF, cytokine_data, "NLF")
-NELF_scores <- get_scores(pca_NELF, cytokine_data, "NELF")
-sputum_scores <- get_scores(pca_sputum, cytokine_data, "Sputum")
-serum_scores <- get_scores(pca_serum, cytokine_data, "Serum")
-
-# Viewing one dataframe
-head(NLF_scores)
-```
-
-    [1m[22mJoining, by = "SubjectID"
-    [1m[22mJoining, by = "SubjectID"
-    [1m[22mJoining, by = "SubjectID"
-    [1m[22mJoining, by = "SubjectID"
-
-
-
-<table class="dataframe">
-<caption>A data.frame: 6 × 25</caption>
-<thead>
-	<tr><th></th><th scope=col>SubjectID</th><th scope=col>Group</th><th scope=col>Conc_pslog2</th><th scope=col>PC1</th><th scope=col>PC2</th><th scope=col>PC3</th><th scope=col>PC4</th><th scope=col>PC5</th><th scope=col>PC6</th><th scope=col>PC7</th><th scope=col>⋯</th><th scope=col>PC13</th><th scope=col>PC14</th><th scope=col>PC15</th><th scope=col>PC16</th><th scope=col>PC17</th><th scope=col>PC18</th><th scope=col>PC19</th><th scope=col>PC20</th><th scope=col>PC21</th><th scope=col>Compartment</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>⋯</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>NS_1</td><td>NS</td><td>4.220509</td><td>0.463357</td><td>1.898504</td><td>0.79337</td><td>-0.9877203</td><td>-1.909841</td><td>-1.335466</td><td>-0.06506033</td><td>⋯</td><td>-0.5439747</td><td>0.2781744</td><td>-0.09106686</td><td>-0.1165704</td><td>-0.2626601</td><td>0.3388554</td><td>0.1926412</td><td>0.3867641</td><td>-0.1183049</td><td>NLF</td></tr>
-	<tr><th scope=row>2</th><td>NS_1</td><td>NS</td><td>1.953721</td><td>0.463357</td><td>1.898504</td><td>0.79337</td><td>-0.9877203</td><td>-1.909841</td><td>-1.335466</td><td>-0.06506033</td><td>⋯</td><td>-0.5439747</td><td>0.2781744</td><td>-0.09106686</td><td>-0.1165704</td><td>-0.2626601</td><td>0.3388554</td><td>0.1926412</td><td>0.3867641</td><td>-0.1183049</td><td>NLF</td></tr>
-	<tr><th scope=row>3</th><td>NS_1</td><td>NS</td><td>1.392467</td><td>0.463357</td><td>1.898504</td><td>0.79337</td><td>-0.9877203</td><td>-1.909841</td><td>-1.335466</td><td>-0.06506033</td><td>⋯</td><td>-0.5439747</td><td>0.2781744</td><td>-0.09106686</td><td>-0.1165704</td><td>-0.2626601</td><td>0.3388554</td><td>0.1926412</td><td>0.3867641</td><td>-0.1183049</td><td>NLF</td></tr>
-	<tr><th scope=row>4</th><td>NS_1</td><td>NS</td><td>5.214035</td><td>0.463357</td><td>1.898504</td><td>0.79337</td><td>-0.9877203</td><td>-1.909841</td><td>-1.335466</td><td>-0.06506033</td><td>⋯</td><td>-0.5439747</td><td>0.2781744</td><td>-0.09106686</td><td>-0.1165704</td><td>-0.2626601</td><td>0.3388554</td><td>0.1926412</td><td>0.3867641</td><td>-0.1183049</td><td>NLF</td></tr>
-	<tr><th scope=row>5</th><td>NS_1</td><td>NS</td><td>6.719857</td><td>0.463357</td><td>1.898504</td><td>0.79337</td><td>-0.9877203</td><td>-1.909841</td><td>-1.335466</td><td>-0.06506033</td><td>⋯</td><td>-0.5439747</td><td>0.2781744</td><td>-0.09106686</td><td>-0.1165704</td><td>-0.2626601</td><td>0.3388554</td><td>0.1926412</td><td>0.3867641</td><td>-0.1183049</td><td>NLF</td></tr>
-	<tr><th scope=row>6</th><td>NS_1</td><td>NS</td><td>4.469856</td><td>0.463357</td><td>1.898504</td><td>0.79337</td><td>-0.9877203</td><td>-1.909841</td><td>-1.335466</td><td>-0.06506033</td><td>⋯</td><td>-0.5439747</td><td>0.2781744</td><td>-0.09106686</td><td>-0.1165704</td><td>-0.2626601</td><td>0.3388554</td><td>0.1926412</td><td>0.3867641</td><td>-0.1183049</td><td>NLF</td></tr>
-</tbody>
-</table>
-
-
-
-### Computing the shape of each cluster based on tobacco product use
-
-
-```R
-get_convex_hulls = function(compartment_scores){
-    # Creating a function to calculate hull values, which specify the shape of each cluster or exposure group
-    grp.NS <- compartment_scores[compartment_scores$Group == "NS", ][chull(compartment_scores %>% filter(Group == "NS") %>% select(PC1, PC2) ), ]
-    grp.CS <- compartment_scores[compartment_scores$Group == "CS", ][chull(compartment_scores %>% filter(Group == "CS") %>% select(PC1, PC2) ), ]
-    grp.Ecig <- compartment_scores[compartment_scores$Group == "Ecig", ][chull(compartment_scores %>% filter(Group == "Ecig") %>% select(PC1, PC2) ), ]
-    
-    all_hulls_compartment <- rbind(grp.NS, grp.CS, grp.Ecig)
-    
-    return(all_hulls_compartment)
-}
-
-# Calling function
-
-NLF_hulls <- get_convex_hulls(NLF_scores)
-NELF_hulls <- get_convex_hulls(NELF_scores)
-sputum_hulls <- get_convex_hulls(sputum_scores)
-serum_hulls <- get_convex_hulls(serum_scores)
-
-# Viewing one dataframe
-head(NLF_hulls)
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 6 × 25</caption>
-<thead>
-	<tr><th></th><th scope=col>SubjectID</th><th scope=col>Group</th><th scope=col>Conc_pslog2</th><th scope=col>PC1</th><th scope=col>PC2</th><th scope=col>PC3</th><th scope=col>PC4</th><th scope=col>PC5</th><th scope=col>PC6</th><th scope=col>PC7</th><th scope=col>⋯</th><th scope=col>PC13</th><th scope=col>PC14</th><th scope=col>PC15</th><th scope=col>PC16</th><th scope=col>PC17</th><th scope=col>PC18</th><th scope=col>PC19</th><th scope=col>PC20</th><th scope=col>PC21</th><th scope=col>Compartment</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>⋯</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>617</th><td>NS_8</td><td>NS</td><td> 4.10482</td><td> 5.895808</td><td>-2.4970339</td><td> 1.7729491</td><td>-0.2252802</td><td> 2.1000431</td><td> 0.38364357</td><td> 0.5960303</td><td>⋯</td><td> 0.345267354</td><td> 0.1336766</td><td> 0.17016166</td><td>-0.44146791</td><td>-0.393191257</td><td>-0.2565284</td><td>-0.19947000</td><td> 0.09538515</td><td> 0.00359428</td><td>NLF</td></tr>
-	<tr><th scope=row>616</th><td>NS_7</td><td>NS</td><td>15.67143</td><td> 1.598828</td><td>-2.9971611</td><td>-0.1729810</td><td>-1.1609734</td><td> 0.2752894</td><td> 1.01574182</td><td>-2.0626563</td><td>⋯</td><td>-0.426883238</td><td>-0.3022027</td><td>-0.25703908</td><td> 0.44473737</td><td>-0.008069723</td><td> 0.3502715</td><td> 0.18235774</td><td>-0.25409770</td><td>-0.15086942</td><td>NLF</td></tr>
-	<tr><th scope=row>792</th><td>NS_9</td><td>NS</td><td>15.09329</td><td>-1.987749</td><td>-2.0109247</td><td>-0.2417217</td><td>-0.3144934</td><td> 0.3838955</td><td>-0.77628508</td><td>-0.5255726</td><td>⋯</td><td>-0.992513596</td><td>-0.1714712</td><td> 0.08405052</td><td>-0.09729486</td><td> 0.313107286</td><td>-0.2641495</td><td>-0.03364114</td><td> 0.04515776</td><td>-0.05539403</td><td>NLF</td></tr>
-	<tr><th scope=row>528</th><td>NS_6</td><td>NS</td><td>14.47520</td><td>-4.300364</td><td>-0.3413821</td><td>-1.0922365</td><td> 0.5102077</td><td>-0.8211334</td><td>-0.01307152</td><td> 0.1818809</td><td>⋯</td><td> 0.005351232</td><td> 0.1625341</td><td> 0.34398932</td><td>-0.43698417</td><td> 0.016907217</td><td> 0.6547679</td><td>-0.13599844</td><td>-0.11213850</td><td>-0.16421922</td><td>NLF</td></tr>
-	<tr><th scope=row>527</th><td>NS_6</td><td>NS</td><td>11.06131</td><td>-4.300364</td><td>-0.3413821</td><td>-1.0922365</td><td> 0.5102077</td><td>-0.8211334</td><td>-0.01307152</td><td> 0.1818809</td><td>⋯</td><td> 0.005351232</td><td> 0.1625341</td><td> 0.34398932</td><td>-0.43698417</td><td> 0.016907217</td><td> 0.6547679</td><td>-0.13599844</td><td>-0.11213850</td><td>-0.16421922</td><td>NLF</td></tr>
-	<tr><th scope=row>526</th><td>NS_6</td><td>NS</td><td>10.27421</td><td>-4.300364</td><td>-0.3413821</td><td>-1.0922365</td><td> 0.5102077</td><td>-0.8211334</td><td>-0.01307152</td><td> 0.1818809</td><td>⋯</td><td> 0.005351232</td><td> 0.1625341</td><td> 0.34398932</td><td>-0.43698417</td><td> 0.016907217</td><td> 0.6547679</td><td>-0.13599844</td><td>-0.11213850</td><td>-0.16421922</td><td>NLF</td></tr>
-</tbody>
-</table>
-
-
-
-### Coercing into one dataframe for easier plotting
-
-
-```R
-eigenvector_values = rbind(NLF_scores[,c(1:5,25)], NELF_scores[,c(1:5,26)], sputum_scores[,c(1:5,25)], serum_scores[,c(1:5,26)])
-hull_values = rbind(NLF_hulls[,c(1:5,25)], NELF_hulls[,c(1:5,26)], sputum_hulls[,c(1:5,25)], serum_hulls[,c(1:5,26)])
-
-# Putting the compartment and group into a factor to specify the order in the plot below
-eigenvector_values$Compartment = factor(eigenvector_values$Compartment, levels = c("NLF", "NELF", "Sputum", "Serum"))
-hull_values$Compartment = factor(hull_values$Compartment, levels = c("NLF", "NELF", "Sputum", "Serum"))
-
-eigenvector_values$Group = factor(eigenvector_values$Group, levels = c("NS", "CS", "Ecig"))
-hull_values$Group = factor(hull_values$Group, levels = c("NS", "CS", "Ecig"))
-
-# Viewing data
-head(eigenvector_values)
-head(hull_values)
-```
-
-
-<table class="dataframe">
-<caption>A data.frame: 6 × 6</caption>
-<thead>
-	<tr><th></th><th scope=col>SubjectID</th><th scope=col>Group</th><th scope=col>Conc_pslog2</th><th scope=col>PC1</th><th scope=col>PC2</th><th scope=col>Compartment</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>1</th><td>NS_1</td><td>NS</td><td>4.220509</td><td>0.463357</td><td>1.898504</td><td>NLF</td></tr>
-	<tr><th scope=row>2</th><td>NS_1</td><td>NS</td><td>1.953721</td><td>0.463357</td><td>1.898504</td><td>NLF</td></tr>
-	<tr><th scope=row>3</th><td>NS_1</td><td>NS</td><td>1.392467</td><td>0.463357</td><td>1.898504</td><td>NLF</td></tr>
-	<tr><th scope=row>4</th><td>NS_1</td><td>NS</td><td>5.214035</td><td>0.463357</td><td>1.898504</td><td>NLF</td></tr>
-	<tr><th scope=row>5</th><td>NS_1</td><td>NS</td><td>6.719857</td><td>0.463357</td><td>1.898504</td><td>NLF</td></tr>
-	<tr><th scope=row>6</th><td>NS_1</td><td>NS</td><td>4.469856</td><td>0.463357</td><td>1.898504</td><td>NLF</td></tr>
-</tbody>
-</table>
-
-
-
-
-<table class="dataframe">
-<caption>A data.frame: 6 × 6</caption>
-<thead>
-	<tr><th></th><th scope=col>SubjectID</th><th scope=col>Group</th><th scope=col>Conc_pslog2</th><th scope=col>PC1</th><th scope=col>PC2</th><th scope=col>Compartment</th></tr>
-	<tr><th></th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;fct&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;fct&gt;</th></tr>
-</thead>
-<tbody>
-	<tr><th scope=row>617</th><td>NS_8</td><td>NS</td><td> 4.10482</td><td> 5.895808</td><td>-2.4970339</td><td>NLF</td></tr>
-	<tr><th scope=row>616</th><td>NS_7</td><td>NS</td><td>15.67143</td><td> 1.598828</td><td>-2.9971611</td><td>NLF</td></tr>
-	<tr><th scope=row>792</th><td>NS_9</td><td>NS</td><td>15.09329</td><td>-1.987749</td><td>-2.0109247</td><td>NLF</td></tr>
-	<tr><th scope=row>528</th><td>NS_6</td><td>NS</td><td>14.47520</td><td>-4.300364</td><td>-0.3413821</td><td>NLF</td></tr>
-	<tr><th scope=row>527</th><td>NS_6</td><td>NS</td><td>11.06131</td><td>-4.300364</td><td>-0.3413821</td><td>NLF</td></tr>
-	<tr><th scope=row>526</th><td>NS_6</td><td>NS</td><td>10.27421</td><td>-4.300364</td><td>-0.3413821</td><td>NLF</td></tr>
-</tbody>
-</table>
-
-
-
-### PCA Plot
-
-
-```R
-options(repr.plot.width=15, repr.plot.height=10) #changing size
-ggplot() + 
-  geom_point(data = eigenvector_values, aes(x = PC1, y = PC2, color = Group, shape = Group), size = 4) +
-#   geom_text_repel(aes(label = Protein), 
-#                   show.legend = FALSE, size = 4.5) + 
-  geom_polygon(data = hull_values, aes(x = PC1, y = PC2, group = Group, fill = Group, color = Group),
-                                       alpha = 0.25, show.legend = FALSE) + 
-  
-  facet_wrap(~Compartment, scales = 'free') + 
-
-  theme_light() + 
-  theme(axis.text.x = element_text(vjust = 0.5), #rotating x labels/ moving x labels slightly to the left
-        axis.line = element_line(colour="black"), #making x and y axes black
-        axis.text = element_text(size = 13), #changing size of x axis labels
-        axis.title = element_text(face = "bold", size = rel(1.7)), #changes axis titles
-        legend.title = element_text(face = 'bold', size = 17), #changes legend title
-        legend.text = element_text(size = 14), #changes legend text
-        legend.position = 'bottom',
-        legend.background = element_rect(colour = 'black', fill = 'white', linetype = 'solid'),
-        strip.text.x = element_text(size = 18, face = "bold"), #changes size of facet x axis 
-        strip.text.y = element_text(size = 18, face = "bold")) + #changes size of facet y axis 
-  xlab('Dimension 1') + ylab('Dimension 2')  #changing axis labels 
-```
-
-
-    
-![png](output_32_0.png)
-    
-
+Takeaways from this heat map:
+- Overall, ordering the axes from highest to lowest concentration didn't help organize the as much as we would've liked given some of the variance of chemical concentrations across the chemical categories
+- However, it's still clear that smoldering pine needles produced the highest concentration of PAHs, smoldering pine with Methoxyphenols, smoldering eucalyptus with Levoglucosan, flaming peat with ions, smoldering peat with n-Alkanes, and flaming peat with inorganic elements
 
 ## Additional Resources
-- https://blog.datawrapper.de/colorguide/
-- https://ggplot2-book.org/
-- https://towardsdatascience.com/beginners-guide-to-enhancing-visualizations-in-r-9fa5a00927c9
 
+These articles provide great information for [Beginner's Guide to Data Visualizations](https://towardsdatascience.com/beginners-guide-to-enhancing-visualizations-in-r-9fa5a00927c9) and [Improving Data Visualizations in R](https://towardsdatascience.com/8-tips-for-better-data-visualization-2f7118e8a9f4). More information on specifically [Generating Colors for Visualizations](https://blog.datawrapper.de/colorguide/). For additional figures available and to view aspects of figures that can be changed in `GGplot2` check out this [GGPlot2 Cheat Sheet](https://www.maths.usyd.edu.au/u/UG/SM/STAT3022/r/current/Misc/data-visualization-2.1.pdf). You might need it for the next section!
 
-```R
+Please note that the heat map generated above is not color blind friendly. It's advisable to use colors for manuscript figures that everyone will be able to see. Check out these [Stack overflow answers about color blind-safe color palettes and packages](https://stackoverflow.com/questions/57153428/r-plot-color-combinations-that-are-colorblind-accessible).
 
-```
+## Test Your Knowledge
+Replicate the figure below! The heat map is the same as the "Test Your Knowledge" figure from [Module 3.3] (add link). This time we'll focus on making the figure look more publication ready by cleaning up the titles, cleaning up the labels, and changing the colors.
+<img src="Module3_4/Module3_4_TYK_figure.png"  />
