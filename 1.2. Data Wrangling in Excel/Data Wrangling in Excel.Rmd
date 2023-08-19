@@ -1,23 +1,26 @@
 # Data Wrangling in Excel
 
-This training module was developed by Alexis Payton, MS, and Dr. Julia E. Rager
+This training module was developed by Alexis Payton, MS, Elise Hickman, and Dr. Julia E. Rager
 
 Spring 2023
 
 ## Introduction to Training Module
 
-This module is intended to be a starting guide to cleaning and organizing an example toxicology dataset in Excel. Data wrangling involves cleaning, removing of erroneous data, and restructing necessary for to preparing wet lab generated data for downstream analyses. These steps will ensure that:
+This module is intended to be a starting guide to cleaning and organizing an example toxicology dataset in Excel. **Data wrangling** involves cleaning, removing of erroneous data, and restructuring necessary for to preparing wet lab generated data for downstream analyses. These steps will ensure that:
 
 + Data are amenable to downstream analyses in R, or your preferred programming language
 + Data are clear and easily interpretable by collaborators, reviewers, and readers 
     
-In this training tutorial, we'll make use of an example dataset that needs to be cleaned. The dataset contains concentration values for molecules that were measured using protein-based ELISA technologies. These molecules specifically span 17 sterols and cytokines, selected based upon their important roles in mediating biological responses. These measures were derived from human serum samples. Demographic information also exists for each subject. 
+Click [here](https://www.alteryx.com/glossary/data-wrangling#:~:text=Data%20wrangling%20is%20the%20process,also%20sometimes%20called%20data%20munging.) for more information on data wrangling.
 
-The following steps detailed in this training module are by no means exhaustive! Further resources are provided at the end. This module provides example steps that are helpful when cleaning your data in Excel. Datasets often come in many different formats from our wet bench colleagues, therefore some steps will likely need to be added, removed, or amended depending on your specific data.
+In this training tutorial, we'll make use of an example dataset that needs to be wrangled. The dataset contains concentration values for molecules that were measured using protein-based ELISA technologies. These molecules specifically span 17 sterols and cytokines, selected based upon their important roles in mediating biological responses. These measures were derived from human serum samples. Demographic information also exists for each subject. 
+
+The following steps detailed in this training module are by no means exhaustive! Further resources are provided at the end. This module provides example steps that are helpful when wrangling your data in Excel. Datasets often come in many different formats from our wet bench colleagues, therefore some steps will likely need to be added, removed, or amended depending on your specific data.
 
 
 ### Save a copy of the soon-to-be organized and cleaned dataset as a new file
 Open Microsoft Excel and prior to **ANY** edits, click “File” --> “Save As” to save a new version of the file that can serve as the cleaned version of the data. This is very important for file tracking purposes, and can help in the instance that the original version needs to be referred back to (e.g., if data are accidently deleted or modified during downstream steps).
+
 + The file needs to be named something indicative of the data it contains followed by the current date (e.g., "Allostatic Mediator Data_061622"). 
 + The title should be succinct and descriptive. 
 + It is okay to use dashes or underscores in the name of the title.
@@ -50,32 +53,37 @@ For more available shortcuts on various operating systems click [here](https://s
 ### Remove extraneous white space
 Before we can begin organizing the data, we need to remove the entirely blank rows of cells. This reduces the file size and allows for the use of the filter function in Excel, as well as other organizing functions, which will be used in the next few steps. This step also makes the data look more tidy and amenable to import for coding purposes. 
 
-+ Excel Trick: Select all lines that need to be removed and press Control + minus key for Mac and PC users. (Note that there are other ways to do this for larger datasets, but this works fine for this small example.)
++ **Excel Trick #1:** Select all lines that need to be removed and press Control + minus key for Mac and PC users. (Note that there are other ways to do this for larger datasets, but this works fine for this small example.)
++ **Excel Trick #2:** An easier way to remove blank rows and cells for larger datasets, includes clicking "Find & Select"--> "Special" --> "Blanks" --> click "OK" to select all blank rows and cells. Click "Delete" within the home tab --> "Delete sheet rows".
+
+After removing the blank rows, the file should look like the screenshot below. 
 <img src="Screenshots/Picture2.png" width="684" />
 
 
 ### Replace missing data with “NA”
 There are many ways missing data can be encoded in datasets. This includes values like "blank", "N/A", "NA", or leaving a cell blank. Replacing all missing values with "NA" values is done for 2 reasons:
+
 + To confirm that the data is indeed missing 
 + R reads in "NA" values as missing values
 
-To check for missing values, the filter function in Excel can be used on each column and only select cells with missing values. You may need to scroll to the bottom of the filter pop up window for numerical data. Enter "NA" into the cell of the filtered column. Double click the bottom right corner of the cell to copy the "NA" down the rest of the column.
+To check for missing values, the filter function can be used on each column and only select cells with missing values. You may need to scroll to the bottom of the filter pop up window for numerical data. Enter "NA" into the cell of the filtered column. Double click the bottom right corner of the cell to copy the "NA" down the rest of the column.
 
 There was no missing data in this dataset, so this step can be skipped. 
 
 ### Create a metadata tab
 Metadata explains what each column represents in the dataset. Metadata is now a required component of data sharing, so it is best to initiate this process prior to data analysis. Ideally, this information is filled in by the scientist(s) who generated the data.
 
-+ Create a new tab (preferably as the first tab) and label it “XXXXX_METADATA” (ie. “Allostatic_METADATA")
-+ Then relabel the original data tab as “XXXX_DATA” (ie. “Allostatic_DATA). 
++ Create a new tab (preferably as the first tab) and label it “XXXXX_METADATA” (ie., “Allostatic_METADATA")
++ Then relabel the original data tab as “XXXX_DATA” (ie., “Allostatic_DATA). 
 + Within the metadata tab, create three columns: the first, "Column Identifier", contains each of the column names found in the data tab; the second, "Code", contains the individual variable/ abbreviation for each column identifier; the third, "Description" contains additional information and definitions for abbreviations.
 
 <img src="Screenshots/Picture3.png" width="684" />
 
 ### Abbreviate and capitalize categorical data
-Categorical data are easier to handle in programming languages when they are capitalized and abbreviated. It also helps reduce typing and potential typing mistakes within your script.
+Categorical data are easier to handle in programming languages when they are capitalized and abbreviated. It also helps reduce typos and potential typing mistakes within your script.
 
 For this dataset, the following variables were edited:
+
 + Group
     + "control" became "NS" for non-smoker
     + "smoker" became "CS" for cigarette smoker
@@ -85,8 +93,10 @@ For this dataset, the following variables were edited:
 + Race
     + "AA" became "B" for Black
     + "White" became "W" for White
+    
+**Excel Trick:** To change cells that contain the same data simultaneously, navigate to "Edit", click "Find", and then "Replace". 
 
-Once the categorical data has been abbreviated, add those abbreviations to the metadata and describe what they symbolize. 
+Once the categorical data have been abbreviated, add those abbreviations to the metadata and describe what they symbolize. 
 
 <img src="Screenshots/Picture4.png" width="684" />
 
@@ -100,9 +110,9 @@ For this dataset, we will sort by the column "Group". This organizes the data an
 
 
 ### Create a new subject number column
-Analysis-specific subjects are created to give an oridinal subject number to each subject, which allows the scientist to easily identify the number of subjects. In addition, these new oridinal subject numbers will be used to create a subject identifier that combines both a subject's group and subject number that is helpful for downstream visualization analyses.
+Analysis-specific subjects are created to give an ordinal subject number to each subject, which allows the scientist to easily identify the number of subjects. In addition, these new oridinal subject numbers will be used to create a subject identifier that combines both a subject's group and subject number that is helpful for downstream visualization analyses.
 
-+ Relabel the subject number/identifier column as “Original_Subject_Number” and create an ordinal subject number column labeled “Subject_Number”. 
++ Relabel the subject number/identifier column as “Original_Subject_Number” and create an ordinal subject number column labeled “Subject_Number”.
 
 R reads in spaces between words as periods, therefore it’s common practice to replace spaces with underscores when doing data analysis in R. Avoid using dashes in column names or anywhere else in the dataset. 
     
@@ -121,9 +131,13 @@ For example, here, it is nice to bold column identifiers and center the data, as
 <img src="Screenshots/Picture6.png" width="684" />
 
 ### Create a subject identifier column
-The subject identifer column labeled, “Group_Subject_No”, combines the subject number with the variable of interest (ie. Group for this dataset). 
+The subject identifer column labeled, “Group_Subject_No”, combines the subject number with the variable of interest (ie. Group for this dataset). This is useful for analyses to identify outliers by the subject number and the group. 
 
-+ This is useful for analyses to identify outliers by the subject number and the group. 
++ Insert 2 additional columns where the current "Sex" column is. 
++ To combine values from two different columns, type "=CONCAT(D1," _ ",C1)" in the first cell in the first column inserted.
++ Double click the right corner of the cell for the formula to be copied to last row in the dataset.
++ Copy the entire column and paste only the values in the second column by navigating to the drop down arrow next to "Paste" and click "Paste Values".
++ Label the second column "Group_Subject_No" and delete the first column.
   
 <img src="Screenshots/Picture7.png" width="684" />
 
@@ -150,7 +164,7 @@ To convert the data from a wide to long format, follow the steps below:
 
 ### Pivoting data from a wide to long format
 To do this, a power query in Excel will be used. 
-Start by selecting all of the data. (Hint: Try using the keyboard shortcut mentioned above.)
+Start by copying all of the data. (Hint: Try using the keyboard shortcut mentioned above.)
 
 1. Click the tab at the top that says "Data". Then click "Get Data (Power Query)" at the far left. 
 2. It will ask you to choose a data source. Click "Blank table" in the bottom row. 
@@ -174,44 +188,49 @@ Start by selecting all of the data. (Hint: Try using the keyboard shortcut menti
 We have successfully wrangled our data and the final dataset now looks like this:
 <img src="Screenshots/Picture14.png" width="684" />
 
+### Generating summary-level statistics with pivot tables
+A PivotTable is a tool in Excel used to summarize numerical data. It’s called a pivot table, because it pivots or changes how the data is displayed to make statistical inferences. This can be useful for generating initial summary-level statistics to guage the distribution of data.  
+
+To create a PivotTable, start by selecting all of the data. (Hint: Try using the keyboard shortcut mentioned above.) Click "Insert" tab on the upper left-hand side, click "PivotTable", and click "OK". The new PivotTable should be available in a new sheet as seen in the screenshot below. 
+
+<img src="Screenshots/Picture15.png" width="684"/>
+
+A PivotTable will be constructed based on the column headers that can be dragged into the PivotTable fields located on the right-hand side. For example, what if we were interested in determining if there were differences in average expression between non-smokers and cigarette smokers in each category of biomarkers? As seen below, drag the "Group" variable under the "Rows" field and drag the "Value" variable under the "Values" field. 
+
+<img src="Screenshots/Picture16.png" width="684"/>
+
+Notice that it automatically calculates the sum of the expression values for each group. To change the function to average, click the "i" icon and select "Average". The output should mirror what's below with non-smokers having an average expression that's more than double that of cigarette smokers. 
+
+<img src="Screenshots/Picture17.png" width="684"/>
+
 ### Excel vs. R: Which should you use?
 For the most part, it's better to perform final analyses in R (or another programming language) rather than Excel for the following reasons...
+
 + R clearly shows the code (instructions), which makes editing, interpretability, and sharing easier. This makes analyses more reproducible and can save time. 
 + R has packages that makes more complex analyses possible (ie. machine learning and heat maps) that aren't available in Excel.
 + R can handle larger data sets.
 + R can compute and process data faster.
 
 However, Excel is still a software that has many benefits for running analyses including...
+
 + Excel is user-friendly and most people have experience in navigating the software at a basic level.
 + Excel can be faster for rudimentary statistical analyses and visualizations. 
 
-Depending on each scientist's skill-level and the complexity of the analysis, Excel or R could be beneficial. One powerful feature that's available in Excel is a PivotTable. 
+Depending on each scientist's skill-level and the complexity of the analysis, Excel or R could be beneficial. 
 
-### Generating summary-level statistics with pivot tables
-A PivotTable is a tool in Excel used to summarize numerical data. It’s called a pivot table, because it pivots or changes how the data is displayed to make statistical inferences. This can be useful for generating initial summary-level statistics to guage the distribution of data.  
-
-To create a PivotTable, start by selecting all of the data. (Hint: Try using the keyboard shortcut mentioned above.) Click "Insert" tab on the upper left-hand side, click "PivotTable", and click "OK". The new PivotTable should be available in a new sheet as seen in the screenshot below. 
-
-<img src="Screenshots/Picture14.png" width="684"/>
-
-A PivotTable will be constructed based on the column headers that can be dragged into the PivotTable fields located on the right-hand side. For example, what if we were interested in determining if there were differences in average expression between non-smokers and cigarette smokers in each category of biomarkers? As seen below, drag the "Group" variable under the "Rows" field and drag the "Value" variable under the "Values" field. 
-
-<img src="Screenshots/Picture15.png" width="684"/>
-
-Notice that it automatically calculates the sum of the expression values for each group. To change the function to average, click the "i" icon and select "Average". The output should mirror what's below with non-smokers having an average expression that's more than double that of cigarette smokers. 
-
-<img src="Screenshots/Picture16.png" width="684"/>
 
 ## Concluding Remarks
-In summary, this training module highlights the importance of data wrangling and how to do so in Microsoft Excel for downstream analyses. Concepts discussed include helpful Excel features like power queries and pivot tables and when to use Microsoft Excel vs. R.
+In summary, this training module highlights the importance of data wrangling and how to do so in Microsoft Excel for downstream analyses. Concepts discussed include helpful Excel features like power queries and pivot tables and when to use Microsoft Excel vs. R. 
 
 
 ## Additional Resources
 Data wrangling in Excel can be expedited with knowledge of useful features and functions to format data. Check out the resources below for additional information on Excel tricks.
-- https://careerfoundry.com/en/blog/data-analytics/data-analysis-in-excel/
-- https://www.lifehack.org/articles/technology/20-excel-spreadsheet-secrets-youll-never-know-you-dont-read-this.html
-- https://www.udemy.com/course/useful-excel-for-beginners/
+
++ https://careerfoundry.com/en/blog/data-analytics/data-analysis-in-excel/
++ https://www.lifehack.org/articles/technology/20-excel-spreadsheet-secrets-youll-never-know-you-dont-read-this.html
++ https://www.udemy.com/course/useful-excel-for-beginners/
 
 ## Test Your Knowledge
-1. Try cleaning the "Module1_2_TYK Raw Dataset" to mimic the cleaned versions of the data entitled, "Module1_2_TYK Subject Info Key" and "Module1_2_TYK Data Key".
+
+1. Try wrangling the "Module1_2_TYK Raw Dataset" to mimic the cleaned versions of the data found in, "Module1_2_TYK Wrangled Data Key". This dataset includes sterol and cytokine concentration levels extracted from induced sputum samples collected after ozone exposure. After wrangling, you should end up with a sheet for subject information, metadata for subject information, experimental data, and metadata for the experimental data.
 2. Using the a PivotTable on the cleaned dataset, find the standard deviation of each cytokine variable stratified by the disease status.
