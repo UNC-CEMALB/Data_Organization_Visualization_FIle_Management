@@ -7,35 +7,24 @@ Spring 2024
 ## Introduction to Machine Learning and Unsupervised Learning
 To reiterate what has been discussed in the previous module, machine learning is a field that has great utility in environmental health sciences, often to investigate high-dimensional datasets. The two main classifications of machine learning discussed throughout the TAME Toolkit are supervised and unsupervised machine learning, though additional classifications exist. Previously, we discussed artificial intelligence and supervised machine learning in [TAME 2.0 Module 5.1 Introduction to Machine Learning & Artificial Intelligence](insert link) and [TAME 2.0 Module 5.2 Supervised Machine Learning](insert link).
 
-**Unsupervised machine learning**, as opposed to supervised machine learning, involves training a model on a dataset lacking ground truths or response variables. In this regard, unsupervised approaches are often used to identify underlying patterns in the data. This can provide the analyst with insights into the data that may not otherwise be apparent. Unsupervised machine learning has been used for understanding differences in gene expression patterns of breast cancer patients ([Jezequel et. al, 2015](https://link.springer.com/article/10.1186/s13058-015-0550-y)) and evaluating metabolomic signatures of individuals with and without cystic fibrosis ([Laguna et. al, 2015](https://onlinelibrary.wiley.com/doi/full/10.1002/ppul.23225?casa_token=Vqlz3JgGm10AAAAA%3A4UFubAP2r97CKl9PK8oYDfgrcjrs_ZySDzDCx1t3qc6XvQRxOqIwjTn_eQxm_lzX8UQLE0zURJu94fI)).
+**Unsupervised machine learning**, as opposed to supervised machine learning, involves training a model on a dataset lacking ground truths or response variables. In this regard, unsupervised approaches are often used to identify underlying patterns in the data. This can provide the analyst with insights into the data that may not otherwise be apparent. Unsupervised machine learning has been used for understanding differences in gene expression patterns of breast cancer patients ([Jezequel et. al, 2015](https://link.springer.com/article/10.1186/s13058-015-0550-y)) and evaluating metabolomic signatures of patients with and without cystic fibrosis ([Laguna et. al, 2015](https://onlinelibrary.wiley.com/doi/full/10.1002/ppul.23225?casa_token=Vqlz3JgGm10AAAAA%3A4UFubAP2r97CKl9PK8oYDfgrcjrs_ZySDzDCx1t3qc6XvQRxOqIwjTn_eQxm_lzX8UQLE0zURJu94fI)).
 
-
-<img src="https://github.com/UNC-CEMALB/P1006_Data-Organization-for-High-Dimensional-Analyses-in-Environmental-Health/assets/69641855/4f78adef-97b6-425f-9a51-43315b0fb7b2" width="725" />
-
+```{r, echo=FALSE, fig.width=4, fig.height=5}
+knitr::include_graphics("Module5_4/Module5_4_Image12.png")
+```
 Figure 2 from Langs G, Röhrich S, Hofmanninger J, Prayer F, Pan J, Herold C, & Prosch H. Machine learning: from <br> radiomics to discovery and routine. *Radiologe*. 2018 Jun 19.doi: 10.1007/s00117-018-0407-3. Figure regenerated here in alignment with its published [Creative Commons Attribution 4.0 International License](https://creativecommons.org/licenses/by/4.0/).
+
+
+It's important to note that unsupervised machine learning is used for exploratory purposes and just because it can find associations between data points that doesn't necessarily mean that those associations have merit, are indicative of causal relationships, or have biological implications. 
 
 <br>
 
 Unsupervised machine learning includes:
-+ Dimensionality reduction: Focuses on taking high-dimensional data and transforming it into a lower-dimensional space that has has fewer features while preserving important information inherent to the original dataset
 + Clustering: Involves grouping elements in a dataset such that the elements in the same group are more similar to each other than to the elements in the other groups
++ Dimensionality reduction: Focuses on taking high-dimensional data and transforming it into a lower-dimensional space that has fewer features while preserving important information inherent to the original dataset
  
 
 The following paragraphs will detail two specific unsupervised ML approaches used in this training module (**K-means clustering** and **Principal Component Analysis**). 
-
-<br>
-
-## Principal Component Analysis (PCA)
-
-Principal Component Analysis, or PCA, is a dimensionality-reduction technique used to transform high-dimensional data into a lower dimensional space while trying to preserve as much of the variability in the original data as possible. PCA has strong foundations in linear algebra, so background knowledge of eigenvalues and eigenvectors is extremely useful. Though the mathematics of PCA is beyond the scope of this module, a variety of more in-depth resources on PCA exist including this [Towards Data Science Blog]("https://towardsdatascience.com/the-mathematics-behind-principal-component-analysis-fff2d7f4b643"), and this [Sartorius Blog](https://www.sartorius.com/en/knowledge/science-snippets/what-is-principal-component-analysis-pca-and-how-it-is-used-507186#:~:text=Principal%20component%20analysis%2C%20or%20PCA,more%20easily%20visualized%20and%20analyzed.). At a higher level, important concepts in PCA include:
-
-1. PCA partitions variance in a dataset into linearly uncorrelated principal components (PCs), which are weighted combinations of the original features. 
-
-2. Each PC (starting from PC1) summarizes a decreasing % of variance.
-
-3. Every instance (e.g. chemical) in the original dataset has a "score" on each PC.
-
-4. Any combination of PCs can be compared to summarize relationships amongst the instances (e.g. chemicals).
 
 <br>
 
@@ -49,19 +38,37 @@ INSERT SOMETHING ABOUT CLUSTERING USING PCA & HIERARCHICAL?
 
 <br>
 
+## Principal Component Analysis (PCA)
+
+Principal Component Analysis, or PCA, is a dimensionality-reduction technique used to transform high-dimensional data into a lower dimensional space while trying to preserve as much of the variability in the original data as possible. PCA has strong foundations in linear algebra, so background knowledge of eigenvalues and eigenvectors is extremely useful. Though the mathematics of PCA is beyond the scope of this module, a variety of more in-depth resources on PCA exist including this [Towards Data Science Blog]("https://towardsdatascience.com/the-mathematics-behind-principal-component-analysis-fff2d7f4b643"), and this [Sartorius Blog](https://www.sartorius.com/en/knowledge/science-snippets/what-is-principal-component-analysis-pca-and-how-it-is-used-507186#:~:text=Principal%20component%20analysis%2C%20or%20PCA,more%20easily%20visualized%20and%20analyzed.). At a higher level, important concepts in PCA include:
+
+1. PCA partitions variance in a dataset into linearly uncorrelated principal components (PCs), which are weighted combinations of the original features. 
+
+2. Each PC (starting from PC1) summarizes a decreasing percentage of variance.
+
+3. Every instance (e.g. chemical) in the original dataset has a "score" on each PC.
+
+4. Any combination of PCs can be compared to summarize relationships amongst the instances (e.g. chemicals), but typically it's the first two eigenvectors that capture a majority of the variance.
+
+```{r, echo=FALSE, fig.width=4, fig.height=5}
+knitr::include_graphics("Module5_4/Module5_4_Image2.png")
+```
+
+<br>
+
 ## Introduction to Training Module
 In this activity, we are going to analyze an example dataset of physicochemical property information for chemicals spanning **per- and polyfluoroalkyl substances (PFAS) and statins**. PFAS represent a ubiquitous and pervasive class of man-made industrial chemicals that are commonly used in food packaging, commercial household products such as Teflon, cleaning products, and flame retardants. PFAS are recognized as highly stable compounds that, upon entering the environment, can persist for many years and act as harmful sources of exposure. Statins represent a class of lipid-lowering compounds that are commonly used as pharmaceutical treatments for patients at risk of cardiovascular disease. Because of their common use amongst patients, statins can also end up in water and wastewater effluent, making them of environmental relevance as well.
 
 This training module was designed to evaluate the chemical space of these diverse compounds and to illustrate the utility of unsupervised machine learning methods to differentiate chemical class and make associations between chemical groupings that can inform a variety of environmental and toxicological applications. The two types of machine learning methods that will be employed are k-means and PCA (as described in the introduction).
 
 
-## Training Module's **Environmental Health Questions**
+## Training Module's Environmental Health Questions
 This training module was specifically developed to answer the following environmental health questions:
 
 1. Can we differentiate between PFAS and statin chemical classes, when considering just the raw physicochemical property variables without applying unsupervised machine learning techniques?
-2. What are some of the physicochemical properties that seem to be driving chemical clustering patterns derived through k-means?
-3. Upon reducing the data through PCA, which physicochemical property contributes the most towards informing data variance captured in the primary principal component (Comp.1)?
-4. How do the data compare when physicochemical properties are reduced using PCA?
+2. If substances are able to be clustered, what are some of the physicochemical properties that seem to be driving chemical clustering patterns derived through k-means?
+3. How do the data compare when physicochemical properties are reduced using PCA?
+4. Upon reducing the data through PCA, which physicochemical property contributes the most towards informing data variance captured in the primary principal component (Comp.1)?
 5. If we did not have information telling us which chemical belonged to which class, could we use PCA and k-means to accurately predict whether a chemical is a PFAS vs statin?
 6. What kinds of applications/endpoints can be better understood and/or predicted, because of these derived chemical groupings?
 
@@ -75,6 +82,7 @@ Loading R packages required for this session
 ```{r, results=FALSE, message=FALSE}
 library(ggplot2)
 library(pheatmap) #used to make heatmaps. This can be done in ggplot2 but pheatmap is easier and nicer
+library(factoextra) # used for PCA
 ```
 
 Getting help with packages and functions
@@ -118,19 +126,16 @@ Let's lastly view all of the column headers:
 colnames(dat)
 ```
 
-In the data file, the first four columns represent chemical identifier information. All remaining columns represent different physicochemical properties derived from OPERA via [Integrated Chemical Environment (ICE)](https://ice.ntp.niehs.nih.gov/). Because the original titles of these physicochemical properties contained commas and spaces, R automatically coverted these into periods. Hence, titles like "OPERA..Boiling.Point"
+In the data file, the first four columns represent chemical identifier information. All remaining columns represent different physicochemical properties derived from OPERA via [Integrated Chemical Environment (ICE)](https://ice.ntp.niehs.nih.gov/). Because the original titles of these physicochemical properties contained commas and spaces, R automatically converted these into periods. Hence, titles like `OPERA..Boiling.Point`.
 
-
-#### Subset to only one chemical identifier (rownames) + data columns (x)
-
-For ease of downstream data analyses, let's create a more focused dataframe option containing only one chemical identifier (CASRN) as row names, and then just the physicochemical property columns
+For ease of downstream data analyses, let's create a more focused dataframe option containing only one chemical identifier (CASRN) as row names, and then just the physicochemical property columns.
 ```{r}
 # Creating a new dataframe that contains the physiocochemical properties
 chemical_prop_df <- dat[,5:ncol(dat)]
 rownames(chemical_prop_df) <- dat$CASRN
 ```
 
-#### Now explore this data subset
+Now explore this data subset:
 ```{r}
 dim(chemical_prop_df) # overall dimensions
 chemical_prop_df[1:4,1:5] # viewing the first four rows and five columns
@@ -140,9 +145,9 @@ colnames(chemical_prop_df)
 
 ### Evaluating the Original Physicochemical Properties across Substances
 
-Let's first see how these chemicals group when using the 'real' (EXPERIMENTAL??) physicochemical property data without any fancy data reduction or other machine learning techniques to answer **Environmental Health Question #1**: Can we differentiate between PFAS and statin chemical classes, when considering just the raw physicochemical property variables without applying unsupervised machine learning techniques?
+Let's first plot two physicochemical properties to determine if and how substances group together without any fancy data reduction or other machine learning techniques. This will answer **Environmental Health Question #1**: Can we differentiate between PFAS and statin chemical classes, when considering just the raw physicochemical property variables without applying unsupervised machine learning techniques?
 
-This question can be answered by plotting chemicals along the first two 'real' properties with molecular weight (`Molecular.Weight`) as one axis and boiling point (`OPERA..Boiling.Point`) on the other. We'll also color by the chemical classes using the `List` column from the original dataframe.
+Let's put molecular weight (`Molecular.Weight`) as one axis and boiling point (`OPERA..Boiling.Point`) on the other. We'll also color by the chemical classes using the `List` column from the original dataframe.
 ```{r}
 ggplot(chemical_prop_df[,1:2], aes(x = Molecular.Weight, y = OPERA..Boiling.Point, color = dat$List)) + 
   geom_point(size = 2) + theme_bw() + 
@@ -150,7 +155,7 @@ ggplot(chemical_prop_df[,1:2], aes(x = Molecular.Weight, y = OPERA..Boiling.Poin
   xlab("Molecular Weight") + ylab("Boiling Point")
 ```
 
-Let's also plot chemicals along the next two sets of 'real' property data with Henry's Law constant (`OPERA..Henry.s.Law.Constant`) as one axis and melting point (`OPERA..Melting.Point`) as the other.
+Let's plot two other physicochemical property variables, Henry's Law constant (`OPERA..Henry.s.Law.Constant`) and melting point (`OPERA..Melting.Point`), to see if the same separation of chemical classes is apparent. 
 ```{r}
 ggplot(chemical_prop_df[,3:4], aes(x = OPERA..Henry.s.Law.Constant, y = OPERA..Melting.Point, 
                                                   color = dat$List)) + 
@@ -159,18 +164,15 @@ ggplot(chemical_prop_df[,3:4], aes(x = OPERA..Henry.s.Law.Constant, y = OPERA..M
   xlab("OPERA..Henry.s.Law.Constant") + ylab("OPERA..Melting.Point")
 ```
 
-These plots provide two examples illustrating part of the distribution of physicochemical properties across the two classes of chemicals, PFAS and statins.
-
-
 *With these, we can answer **Environmental Health Question #1***: Can we differentiate between PFAS and statin chemical classes, when considering just the raw physicochemical property variables without applying machine learning techniques?
 
 **Answer**: Only in part. From the first plot, we can see that PFAS tend to have lower molecular weight ranges in comparison to the statins, though other property variables clearly overlap in ranges of values, making the groupings not entirely clear.
 
 <br>
 
-## Identifying Clusters of Chemicals through k-means
+## Identifying Clusters of Chemicals through K-Means
 
-Let's turn out attention to **Environmental Health Question #2**: What are some of the physicochemical properties that seem to be driving chemical clustering patterns derived through k-means? This will be done deriving clusters of chemicals, based on ALL underlying physicochemical property data, using k-means clustering.
+Let's turn out attention to **Environmental Health Question #2**: If substances are able to be clustered, what are some of the physicochemical properties that seem to be driving chemical clustering patterns derived through k-means? This will be done deriving clusters of chemicals, based on ALL underlying physicochemical property data, using k-means clustering.
 
 For this example, let's coerce the k-means algorithms to calculate 2 distinct clusters (based on their corresponding mean centered values). Here we choose to derive two distinct clusters, because we are ultimately going to see if we can use this information to predict each chemical's classification into two distinct chemical classes (i.e., PFAS vs statins). Note that we can derive more clusters using similar code, depending on the question being addressed.
 
@@ -179,9 +181,7 @@ We can give a name to this variable, to easily provide the number of clusters in
 num.centers <- 2
 ```
 
-
-#### Estimate k-means clusters
-Here we derive chemical clusters using k-means
+Here we derive chemical clusters using k-means:
 ```{r}
 clusters <- kmeans(chemical_prop_df,                  # input dataframe
                    centers = num.centers,  # number of cluster centers to calculate
@@ -195,8 +195,7 @@ clusters$centers
 ```
 <br>
 
-#### Visualize k-means clusters
-Let's add the cluster assignments to the physicochemical data and create a new dataframe, which can then be used in a heat map visualization to see how these physicochemical data distributions clustered according to k-means.
+Let's add the cluster assignments to the physicochemical data and create a new dataframe, which can then be used in a heatmap visualization to see how these physicochemical data distributions clustered according to k-means.
 
 These cluster assignments can be pulled from the `cluster` list output, where chemicals are designated to each cluster with either a 1 or 2. You can view these using:
 ```{r}
@@ -211,8 +210,7 @@ dat_wclusters <- dat_wclusters[order(dat_wclusters$kmeans_cluster),]  # sorting 
 ```
 <br>
 
-### Heat map visualization of the resulting k-means clusters
-To generate a heat map, we need to first create a separate dataframe for the cluster assignments, ordered in the same way as the physicochemical data:
+To generate a heatmap, we need to first create a separate dataframe for the cluster assignments, ordered in the same way as the physicochemical data:
 ```{r}
 hm_cluster <- data.frame(dat_wclusters$kmeans_cluster, row.names = row.names(dat_wclusters))  # creating the dataframe
 colnames(hm_cluster) <- "kmeans_cluster"   # reassigning the column name
@@ -221,121 +219,124 @@ hm_cluster$kmeans_cluster <- as.factor(hm_cluster$kmeans_cluster)   # coercing t
 head(hm_cluster)  # viewing this new cluster assignment dataframe
 ```
 
-Then we can call this dataframe, as well as the main physicochemical property dataframe (both sorted by clusters) into the following heatmap visualization code, leveraging the `pheatmap` function.
-DISCUSS MORE ABOUT PHEATMAP!!
+Then we can call this dataframe, as well as the main physicochemical property dataframe (both sorted by clusters) into the following heatmap visualization code, leveraging the `pheatmap()` function. This function was designed specifically to enable clustered heatmap visualizations. Check out [pheatmap Documenation](https://www.rdocumentation.org/packages/pheatmap/versions/1.0.12/topics/pheatmap) for additional information. 
 
+### Heatmap Visualization of the Resulting K-Means Clusters
 ```{r, fig.height=8, fig.width=10}
 chem_hm <- pheatmap(dat_wclusters[,1:10], main = "Heatmap of Physicochemical Properties with k-means Cluster Assignments",
                     cluster_rows = FALSE, cluster_cols = FALSE, # no further clustering, for simplicity
-                    scale ="column",              # scaling the data to make differences across chemicals more apparent
+                    scale = "column",              # scaling the data to make differences across chemicals more apparent
                     annotation_row = hm_cluster, # calling the cluster assignment dataframe as a separate color bar
                     angle_col = 45, fontsize_col = 7, fontsize_row = 3, # adjusting size and orientation of labels on axes
                     cellheight = 3, cellwidth = 25, # setting height and width for cells
                     border_color = FALSE # specify no border surrounding the cells
 )
 ```
-
 Shown here is a heat map displaying the relative values for each physicochemical property, with all 10 properties listed along the bottom. Individual chemicals are listed along the right hand side. The k-means cluster assignment is provided as a separate color bar on the left.
 
+We can also do this same thing with hiearchical clustering...ADD WORDS.
+```{r, fig.height=8, fig.width=10}
+chem_hm <- pheatmap(dat_wclusters[,1:10], main = "Heatmap of Physicochemical Properties with Hierarchical Clustering",
+                   cluster_rows = TRUE, cluster_cols = FALSE, # now using hierarchical clustering to group the rows
+                    scale = "column",              # scaling the data to make differences across chemicals more apparent
+                    cutree_row = 2, # adds a break between the 2 largest clusters
+                    angle_col = 45, fontsize_col = 7, fontsize_row = 3, # adjusting size and orientation of labels on axes
+                    cellheight = 3, cellwidth = 25, # setting height and width for cells
+                    border_color = FALSE # specify no border surrounding the cells
+)
+```
 
 *With this, we can answer **Environmental Health Question #2***: What are some of the physicochemical properties that seem to be driving chemical clustering patterns derived through k-means?
 
-<br>
 **Answer**: Properties with values that show obvious differences between resulting clusters including molecular weight, boiling point, negative log of acid dissociation constant, octanol air partition coefficient, and octanol water distribution coefficient.
 
 <br>
 
 ## Principal Component Analysis (PCA)
-Next, we will run through some example analyses applying the common data reduction technique of PCA.
+Next, we will run through some example analyses applying the common data reduction technique of PCA. We'll start by determining how much of the variance is able to be captured within the first two principal components to answer **Environmental Health Question #3**: How do the data compare when physicochemical properties are reduced using PCA? It's recommended to proceed with additional PCA analyses only if at least 60% of the data is able to captured within the first few principal components or eigenvectors [source](INSERT LINK).
 
-We can calculate the principal components across ALL physicochemical data across all chemicals using the princomp function
+
+We can calculate the principal components across ALL physicochemical data across all chemicals using the `prcomp()` function. Always make sure your data is centered and scaled prior to running to PCA, since it's sensitive to variance.????
 ```{r}
-my.pca <- princomp(chemical_prop _df,   # input dataframe of physchem data
-                   cor = T) # calculations will be based on the correlation matrix (as opposed to covariance) since we have all numeric values here (default PCA option)
+my.pca <- prcomp(chemical_prop_df,   # input dataframe of physchem data
+                   scale = TRUE, center = TRUE) 
 ```
 
-
-Here are the resulting scores for each chemical's contribution towards each principal component (shown here as components 1-10)
+We can see how much of the variance was able to be captured in each of the eigenvectors or dimensions using a scree plot. 
 ```{r}
-head(my.pca$scores)
+fviz_eig(my.pca, addlabels = TRUE)
 ```
 
-And the resulting loading factors of each property's contribution towards each principal component. Note that by deafault, really small loadings are replaced with empty spaces, per the documentation for the *stats* function, *loadings*.
-```{r}
-my.pca$loadings
-```
-
-<br>
-
-With these results, we can answer **Environmental Health Question #3**: Upon reducing the data through PCA, which physicochemical property contributes the most towards informing data variance captured in the primary principal component (Comp.1)?
-
-<br>
-**Answer**: Boiling point contributes the most towards principal component #1, as it has the largest magnitude (0.464).
-
-<br>
-
-#### Calculating % of Variance Captured by each Principal Component
-
-We can view summary statistics describing how much of the variance from the original dataset was captured by each component, using the summary function.
-```{r}
-summary(my.pca)
-```
-
-We can also calculate these values, and pull them into a dataframe for future use.
-
-For example, to pull the percentage of variance explained by each principal component, we can run the following calculations, where first eigenvalues (eigs) are calculated and then used to calculate percent of variance, per principal component:
+We can also calculate these values, and pull them into a dataframe for future use. For example, to pull the percentage of variance explained by each principal component, we can run the following calculations, where first eigenvalues (eigs) are calculated and then used to calculate percent of variance, per principal component:
 ```{r}
 eigs <- my.pca$sdev^2
-Comp.stats <- data.frame(eigs, eigs/sum(eigs), row.names=names(eigs))
+Comp.stats <- data.frame(eigs, eigs/sum(eigs), row.names = names(eigs))
 colnames(Comp.stats) <- c("Eigen_Values", "Percent_of_Variance")
+
 head(Comp.stats)
 ```
-Here, we can see that Principal Component #1 (Comp.1) captures ~41% of the variance across all physicochemical property values, across all chemicals. Principal Component #2 captures ~24%, etc.
+
+*With this, we can answer **Environmental Health Question #3***: How do the data compare when physicochemical properties are reduced using PCA?
+
+**Answer**: Principal Component 1 captures ~41% of the variance and Principal Component 2 captures ~24% across all physicochemical property values, across all chemicals. These two components together describe ~65% of data and we can proceed with subsequent analyses.
 
 <br>
+
+Next, we'll use PCA to answer **Environmental Health Question #4**: Upon reducing the data through PCA,which physicochemical property contributes the most towards informing data variance captured in the primary principal component (Comp.1)?
+
+Here are the resulting scores for each chemical's contribution towards each principal component (shown here as components `PC1`-`PC10`).
+```{r}
+head(my.pca$x)
+```
+
+And the resulting loading factors of each property's contribution towards each principal component. Note that by default, really small loadings are replaced with empty spaces.
+```{r}
+my.pca$rotation
+```
+
+*With these results, we can answer **Environmental Health Question #4***: Upon reducing the data through PCA, which physicochemical property contributes the most towards informing data variance captured in the primary principal component (Comp.1)?
+
+**Answer**: Boiling point contributes the most towards principal component 1, as it has the largest magnitude (0.464).
+
+<br>
+
 
 #### Visualizing PCA Results
 
-Let's now view the results of this PCA, focusing on the first two principal components, and coloring each chemical according to class (i.e. PFAS vs statins).
+Let's turn our attention to **Environmental Health Question #5**: 5.	If we did not have information telling us which chemical belonged to which class, could we use PCA and k-means to accurately predict whether a chemical is a PFAS vs statin?
+
+We can start by answering this question be visualizing the first two principal components and coloring each chemical according to class (i.e. PFAS vs statins).
 ```{r}
-ggplot(as.data.frame(my.pca$scores), aes(x=Comp.1, y=Comp.2, color=as.factor(dat$List))) + 
-  geom_point(size=4) + theme_bw() + 
+ggplot(data.frame(my.pca$x), aes(x = PC1, y = PC2, color = dat$List)) + 
+  geom_point(size = 2) + theme_bw() + 
   ggtitle('Version C: PCA Plot of the First 2 PCs, colored by Chemical Class') + 
   xlab("Principal Component 1") + ylab("Principal Component 2")
 ```
+*With this, we can answer **Environmental Health Question #5***: If we did not have information telling us which chemical belonged to which class, could we use PCA and k-means to accurately predict whether a chemical is a PFAS vs statin?
 
-
-With this, we can answer **Environmental Health Question #4**: How do the data compare when physicochemical properties are reduced using PCA?
-
-<br>
- **Answer**: Data become more compressed, and variables reduce across principal components capturing the majority of variance. This results in improved data visualizations, where all dimensions of the physiochemical dataset are compressed and captured across the displayed components.
-
+ **Answer**: Data become more compressed and variables reduce across principal components capturing the majority of the variance (~65%). This results in improved data visualizations, where all dimensions of the physiochemical dataset are compressed and captured across the displayed components. In addition, the figure above shows a clear separation between PFAS and statin chemical when visualizing the reduced dataset. 
 
 <br>
 
 ## Incorporating K-Means into PCA for Predictive Modeling
+
 We can also identify cluster-based trends within data that are reduced after running PCA. This example analysis does so, expanding upon the previously generated PCA results.
 
-<br>
+### Estimate k-means clusters from PCA results
 
-#### Estimate k-means clusters from PCA results
-
-Let's first run script, similar to the previous k-means analysis and associated parameters, though instead here we will use data reduced values from the PCA analysis. Specifically, clusters across PCA "scores" values will be derived, where scores represent the relative amount each chemical contributed to each principal component.
-
+Let's first run code, similar to the previous k-means analysis and associated parameters, though instead here we will use data reduced values from the PCA analysis. Specifically, clusters across PCA "scores" values will be derived, where scores represent the relative amount each chemical contributed to each principal component.
 ```{r}
-clusters_PCA <- kmeans(my.pca$scores, centers = num.centers, iter.max = 1000, nstart = 50)
+clusters_PCA <- kmeans(my.pca$x, centers = num.centers, iter.max = 1000, nstart = 50)
 ```
-
 
 The resulting PCA score values that were derived as the final cluster centers can be pulled using:
 ```{r}
 clusters_PCA$centers
 ```
 
-
 Viewing the final cluster assignment, per chemical:
 ```{r}
-head(cbind(rownames(chemical_prop _df),clusters_PCA$cluster))
+head(cbind(rownames(chemical_prop_df),clusters_PCA$cluster))
 ```  
 
 <br>
@@ -344,40 +345,31 @@ head(cbind(rownames(chemical_prop _df),clusters_PCA$cluster))
 
 Let's now view, again, the results of the main PCA, focusing on the first two principal components; though this time let's color each chemical according to k-means cluster.
 ```{r}
-ggplot(as.data.frame(my.pca$scores), aes(x=Comp.1, y=Comp.2, color=as.factor(clusters_PCA$cluster))) + 
-  geom_point(size=4) + theme_bw() + 
+ggplot(data.frame(my.pca$x), aes(x = PC1, y = PC2, color = as.factor(clusters_PCA$cluster))) + 
+  geom_point(size = 2) + theme_bw() + 
   ggtitle('Version D: PCA Plot of the First 2 PCs, colored by k-means Clustering') + 
   xlab("Principal Component 1") + ylab("Principal Component 2")
 ```
 
+*With this we can answer **Environmental Health Question #6***: What kinds of applications/endpoints can be better understood and/or predicted, because of these derived chemical groupings?
 
-With this, we can answer **Environmental Health Question #5**: If we did not have information telling us which chemical belonged to which class, could we use PCA and k-means to accurately predict whether a chemical is a PFAS vs statin?
 
-<br>
-**Answer**: Yes!! Groupings derived from k-means, displayed in this PCA plot, line up almost exactly with the grouping of chemical classes (see Version C of this plot as the direct comparison).*
-
-<br>
-
-We can also answer **Environmental Health Question #6**: What kinds of applications/endpoints can be better understood and/or predicted, because of these derived chemical groupings?
-
-<br>
-**Answers**:  
-
-- *With these well-informed chemical groupings, we can now better understand the variables that attribute to the chemical classifications.*  
-- *We can also use this information to better understand data trends, and predict environmental fate and transport for these chemicals.*  
-- *The reduced variables derived through PCA, and/or k-means clustering patterns can also be used as input variables to predict toxicological outcomes.*
+**Answer**: With these well-informed chemical groupings, we can now better understand the variables that attribute to the chemical classifications. We can also use this information to better understand data trends and predict environmental fate and transport for these chemicals. The reduced variables derived through PCA, and/or k-means clustering patterns can also be used as input variables to predict toxicological outcomes.
 
 <br>
 
 ## Concluding Remarks
-In conclusion, this training module provide an example excercise on organizing physicochemical data, and analyzing trends within these data to determine chemical groupings. Results are compared from those produced using just the original data vs. clustered data from k-means vs. reduced data from PCA. These methods represent common tools that are used in high dimensional data analyses within the field of environmental health sciences.
+In conclusion, this training module provide an example exercise on organizing physicochemical data and analyzing trends within these data to determine chemical groupings. Results are compared from those produced using just the original data vs. clustered data from k-means vs. reduced data from PCA. These methods represent common tools that are used in high dimensional data analyses within the field of environmental health sciences.
 
 <br>
 
 ## Test Your Knowledge 
 
-Using the accompanying Flame Retardant and Pesticide physicochemical property variables found in the file *Pest_FR_Physchem.csv*, answer the following questions:
+In this training module, we presented an unsupervised machine learning example that was based on defining k-means clusters based on chemical class where k = 2. Often times, analyses are conducted to explore potential clustering relationships without an preexisting idea of what *k* or the number of clusters should be. In this test your knowledge section, we'll go through an example like that. 
 
-(1) What are some of the physicochemical properties that seem to be driving chemical clustering patterns derived through k-means?
-(2) Upon reducing the data through PCA, which physicochemical property contributes the most towards informing data variance captured in the primary principal component (Comp.1)?
-(3) Construct a PCA plot of the first two Principal Components.
+Using the accompanying flame retardant and pesticide physicochemical property variables found in the file ("Pest_FR_Physchem.csv"), answer the following questions:
+
+1. Using k-means clustering, what are the optimal number of clusters we can group these substances into? *Hint*: These methods were not presented in the module, so check out the test your knowledge solution....
+2. What are some of the physicochemical properties that seem to be driving chemical clustering patterns derived through k-means?
+3. Upon reducing the data through PCA, which physicochemical property contributes the most towards informing data variance captured in the primary principal component (Comp.1)?
+4.. Construct a PCA plot of the first two Principal Components.
